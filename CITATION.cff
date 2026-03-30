@@ -1,0 +1,39 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+title: "UGAF-ITS Governance Engine"
+version: 1.1.0
+date-released: 2026-03-30
+doi: 10.5281/zenodo.19339072
+url: "https://github.com/talalbutt/ugaf-its-engine"
+repository-code: "https://github.com/talalbutt/ugaf-its-engine"
+license: MIT
+type: software
+authors:
+  - family-names: Butt
+    given-names: Talal Ashraf
+    email: tbutt@hct.ac.ae
+    affiliation: "Higher Colleges of Technology, United Arab Emirates"
+    orcid: "https://orcid.org/0000-0002-5566-0992"
+  - family-names: Iqbal
+    given-names: Muhammad
+    email: miqbal1@hct.ac.ae
+    affiliation: "Higher Colleges of Technology, United Arab Emirates"
+  - family-names: Iqbal
+    given-names: Razi
+    email: razi.iqbal@ieee.org
+    affiliation: "Central Michigan University, United States of America"
+keywords:
+  - AI governance
+  - ISO/IEC 42001
+  - EU AI Act
+  - NIST AI RMF
+  - intelligent transportation systems
+  - regulatory harmonization
+  - multi-framework compliance
+abstract: >-
+  Computational validation tool for the Unified Governance and
+  Assurance Framework for Distributed Intelligent Transportation
+  Systems (UGAF-ITS). Harmonizes 154 governance obligations from
+  ISO/IEC 42001, EU AI Act, and NIST AI RMF into 12 unified
+  controls with tier-aware allocation across vehicle, edge/RSU,
+  and cloud boundaries.
