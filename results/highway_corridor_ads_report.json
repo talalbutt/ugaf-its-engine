@@ -1,0 +1,1089 @@
+{
+  "system_name": "Highway Corridor ADS",
+  "description": "Vehicle-heavy highway ADS with minimal edge and cloud fleet management",
+  "architecture_summary": {
+    "total_components": 7,
+    "active_tiers": [
+      "T1",
+      "T2",
+      "T3"
+    ],
+    "tier_component_counts": {
+      "T1": 4,
+      "T2": 1,
+      "T3": 2
+    },
+    "owners": [
+      "authority",
+      "fleet_operator",
+      "oem"
+    ]
+  },
+  "control_activation": {
+    "total_activated": 12,
+    "total_possible": 12,
+    "activation_ratio": 100.0,
+    "controls": {
+      "UC-01": {
+        "name": "AI Risk Assessment",
+        "domain": "D1",
+        "enforced_at_tiers": [
+          "T1",
+          "T2",
+          "T3"
+        ],
+        "tier_owners": {
+          "T1": [
+            "oem"
+          ],
+          "T2": [
+            "authority"
+          ],
+          "T3": [
+            "fleet_operator"
+          ]
+        },
+        "primary_artifact": "risk_register",
+        "lifecycle_phases": [
+          "design",
+          "monitor",
+          "change"
+        ],
+        "source_count": 32
+      },
+      "UC-02": {
+        "name": "Risk Treatment Planning",
+        "domain": "D1",
+        "enforced_at_tiers": [
+          "T1",
+          "T2",
+          "T3"
+        ],
+        "tier_owners": {
+          "T1": [
+            "oem"
+          ],
+          "T2": [
+            "authority"
+          ],
+          "T3": [
+            "fleet_operator"
+          ]
+        },
+        "primary_artifact": "risk_register",
+        "lifecycle_phases": [
+          "design",
+          "deploy",
+          "change"
+        ],
+        "source_count": 14
+      },
+      "UC-03": {
+        "name": "Data Quality Assurance",
+        "domain": "D2",
+        "enforced_at_tiers": [
+          "T2",
+          "T3"
+        ],
+        "tier_owners": {
+          "T2": [
+            "authority"
+          ],
+          "T3": [
+            "fleet_operator"
+          ]
+        },
+        "primary_artifact": "data_quality_report",
+        "lifecycle_phases": [
+          "design",
+          "build",
+          "monitor"
+        ],
+        "source_count": 13
+      },
+      "UC-04": {
+        "name": "Bias Detection & Mitigation",
+        "domain": "D2",
+        "enforced_at_tiers": [
+          "T2",
+          "T3"
+        ],
+        "tier_owners": {
+          "T2": [
+            "authority"
+          ],
+          "T3": [
+            "fleet_operator"
+          ]
+        },
+        "primary_artifact": "data_quality_report",
+        "lifecycle_phases": [
+          "build",
+          "monitor"
+        ],
+        "source_count": 5
+      },
+      "UC-05": {
+        "name": "Human Oversight Design",
+        "domain": "D3",
+        "enforced_at_tiers": [
+          "T1",
+          "T2"
+        ],
+        "tier_owners": {
+          "T1": [
+            "oem"
+          ],
+          "T2": [
+            "authority"
+          ]
+        },
+        "primary_artifact": "oversight_protocol",
+        "lifecycle_phases": [
+          "design",
+          "build"
+        ],
+        "source_count": 9
+      },
+      "UC-06": {
+        "name": "Override & Intervention",
+        "domain": "D3",
+        "enforced_at_tiers": [
+          "T1",
+          "T2"
+        ],
+        "tier_owners": {
+          "T1": [
+            "oem"
+          ],
+          "T2": [
+            "authority"
+          ]
+        },
+        "primary_artifact": "oversight_protocol",
+        "lifecycle_phases": [
+          "design",
+          "deploy",
+          "monitor"
+        ],
+        "source_count": 5
+      },
+      "UC-07": {
+        "name": "System Documentation",
+        "domain": "D6",
+        "enforced_at_tiers": [
+          "T1",
+          "T2",
+          "T3"
+        ],
+        "tier_owners": {
+          "T1": [
+            "oem"
+          ],
+          "T2": [
+            "authority"
+          ],
+          "T3": [
+            "fleet_operator"
+          ]
+        },
+        "primary_artifact": "technical_file",
+        "lifecycle_phases": [
+          "design",
+          "build",
+          "deploy",
+          "change"
+        ],
+        "source_count": 16
+      },
+      "UC-08": {
+        "name": "Transparency Communication",
+        "domain": "D4",
+        "enforced_at_tiers": [
+          "T1",
+          "T2",
+          "T3"
+        ],
+        "tier_owners": {
+          "T1": [
+            "oem"
+          ],
+          "T2": [
+            "authority"
+          ],
+          "T3": [
+            "fleet_operator"
+          ]
+        },
+        "primary_artifact": "instructions_for_use",
+        "lifecycle_phases": [
+          "deploy"
+        ],
+        "source_count": 8
+      },
+      "UC-09": {
+        "name": "Accuracy Validation",
+        "domain": "D5",
+        "enforced_at_tiers": [
+          "T1",
+          "T2",
+          "T3"
+        ],
+        "tier_owners": {
+          "T1": [
+            "oem"
+          ],
+          "T2": [
+            "authority"
+          ],
+          "T3": [
+            "fleet_operator"
+          ]
+        },
+        "primary_artifact": "vv_test_report",
+        "lifecycle_phases": [
+          "build",
+          "deploy"
+        ],
+        "source_count": 11
+      },
+      "UC-10": {
+        "name": "Robustness & Security",
+        "domain": "D5",
+        "enforced_at_tiers": [
+          "T1",
+          "T2",
+          "T3"
+        ],
+        "tier_owners": {
+          "T1": [
+            "oem"
+          ],
+          "T2": [
+            "authority"
+          ],
+          "T3": [
+            "fleet_operator"
+          ]
+        },
+        "primary_artifact": "vv_test_report",
+        "lifecycle_phases": [
+          "build",
+          "deploy",
+          "monitor"
+        ],
+        "source_count": 7
+      },
+      "UC-11": {
+        "name": "Supplier AI Assessment",
+        "domain": "D7",
+        "enforced_at_tiers": [
+          "T3"
+        ],
+        "tier_owners": {
+          "T3": [
+            "fleet_operator"
+          ]
+        },
+        "primary_artifact": "supplier_audit_report",
+        "lifecycle_phases": [
+          "build",
+          "change"
+        ],
+        "source_count": 6
+      },
+      "UC-12": {
+        "name": "Incident Response",
+        "domain": "D8",
+        "enforced_at_tiers": [
+          "T1",
+          "T2",
+          "T3"
+        ],
+        "tier_owners": {
+          "T1": [
+            "oem"
+          ],
+          "T2": [
+            "authority"
+          ],
+          "T3": [
+            "fleet_operator"
+          ]
+        },
+        "primary_artifact": "incident_response_plan",
+        "lifecycle_phases": [
+          "monitor",
+          "change"
+        ],
+        "source_count": 15
+      }
+    }
+  },
+  "evidence_backbone": {
+    "risk_register": {
+      "name": "Risk Register + Treatment Log",
+      "primary_tier": "T3",
+      "producing_tiers": [
+        "T1",
+        "T2",
+        "T3"
+      ],
+      "frameworks_served": [
+        "ISO42001",
+        "EU_AI_Act",
+        "NIST_RMF"
+      ],
+      "framework_count": 3,
+      "ucs_served": [
+        "UC-01",
+        "UC-02"
+      ],
+      "owner_role": "authority_ops"
+    },
+    "data_quality_report": {
+      "name": "Data Quality Report",
+      "primary_tier": "T2",
+      "producing_tiers": [
+        "T2",
+        "T3"
+      ],
+      "frameworks_served": [
+        "ISO42001",
+        "EU_AI_Act",
+        "NIST_RMF"
+      ],
+      "framework_count": 3,
+      "ucs_served": [
+        "UC-03",
+        "UC-04"
+      ],
+      "owner_role": "integrator"
+    },
+    "bias_performance_report": {
+      "name": "Bias & Performance Report",
+      "primary_tier": "T2",
+      "producing_tiers": [
+        "T2",
+        "T3"
+      ],
+      "frameworks_served": [
+        "ISO42001",
+        "EU_AI_Act",
+        "NIST_RMF"
+      ],
+      "framework_count": 3,
+      "ucs_served": [
+        "UC-04"
+      ],
+      "owner_role": "integrator"
+    },
+    "oversight_protocol": {
+      "name": "Oversight Protocol",
+      "primary_tier": "T1",
+      "producing_tiers": [
+        "T1",
+        "T2"
+      ],
+      "frameworks_served": [
+        "ISO42001",
+        "EU_AI_Act",
+        "NIST_RMF"
+      ],
+      "framework_count": 3,
+      "ucs_served": [
+        "UC-05",
+        "UC-06"
+      ],
+      "owner_role": "oem"
+    },
+    "intervention_fallback_plan": {
+      "name": "Intervention & Fallback Plan",
+      "primary_tier": "T1",
+      "producing_tiers": [
+        "T1",
+        "T2"
+      ],
+      "frameworks_served": [
+        "ISO42001",
+        "EU_AI_Act",
+        "NIST_RMF"
+      ],
+      "framework_count": 3,
+      "ucs_served": [
+        "UC-06"
+      ],
+      "owner_role": "oem"
+    },
+    "event_override_logs": {
+      "name": "Event & Override Logs",
+      "primary_tier": "T1",
+      "producing_tiers": [
+        "T1"
+      ],
+      "frameworks_served": [
+        "ISO42001",
+        "EU_AI_Act"
+      ],
+      "framework_count": 2,
+      "ucs_served": [
+        "UC-06",
+        "UC-12"
+      ],
+      "owner_role": "oem"
+    },
+    "instructions_for_use": {
+      "name": "Instructions for Use",
+      "primary_tier": "T3",
+      "producing_tiers": [
+        "T1",
+        "T2",
+        "T3"
+      ],
+      "frameworks_served": [
+        "ISO42001",
+        "EU_AI_Act",
+        "NIST_RMF"
+      ],
+      "framework_count": 3,
+      "ucs_served": [
+        "UC-08"
+      ],
+      "owner_role": "authority_ops"
+    },
+    "vv_test_report": {
+      "name": "V&V Test Report",
+      "primary_tier": "T1",
+      "producing_tiers": [
+        "T1",
+        "T2",
+        "T3"
+      ],
+      "frameworks_served": [
+        "ISO42001",
+        "EU_AI_Act",
+        "NIST_RMF"
+      ],
+      "framework_count": 3,
+      "ucs_served": [
+        "UC-09",
+        "UC-10"
+      ],
+      "owner_role": "oem"
+    },
+    "security_test_report": {
+      "name": "Security Test Report",
+      "primary_tier": "T1",
+      "producing_tiers": [
+        "T1",
+        "T2",
+        "T3"
+      ],
+      "frameworks_served": [
+        "ISO42001",
+        "EU_AI_Act",
+        "NIST_RMF"
+      ],
+      "framework_count": 3,
+      "ucs_served": [
+        "UC-10"
+      ],
+      "owner_role": "oem"
+    },
+    "technical_file": {
+      "name": "Technical File",
+      "primary_tier": "T3",
+      "producing_tiers": [
+        "T1",
+        "T2",
+        "T3"
+      ],
+      "frameworks_served": [
+        "ISO42001",
+        "EU_AI_Act",
+        "NIST_RMF"
+      ],
+      "framework_count": 3,
+      "ucs_served": [
+        "UC-07"
+      ],
+      "owner_role": "authority_ops"
+    },
+    "release_manifest": {
+      "name": "Release Manifest",
+      "primary_tier": "T1",
+      "producing_tiers": [
+        "T1"
+      ],
+      "frameworks_served": [
+        "ISO42001",
+        "EU_AI_Act"
+      ],
+      "framework_count": 2,
+      "ucs_served": [
+        "UC-07",
+        "UC-10"
+      ],
+      "owner_role": "oem"
+    },
+    "supplier_audit_report": {
+      "name": "Supplier Audit Report",
+      "primary_tier": "T3",
+      "producing_tiers": [
+        "T3"
+      ],
+      "frameworks_served": [
+        "ISO42001",
+        "EU_AI_Act",
+        "NIST_RMF"
+      ],
+      "framework_count": 3,
+      "ucs_served": [
+        "UC-11"
+      ],
+      "owner_role": "authority_ops"
+    },
+    "third_party_register": {
+      "name": "Third-Party Component Register",
+      "primary_tier": "T3",
+      "producing_tiers": [
+        "T3"
+      ],
+      "frameworks_served": [
+        "ISO42001",
+        "EU_AI_Act",
+        "NIST_RMF"
+      ],
+      "framework_count": 3,
+      "ucs_served": [
+        "UC-11"
+      ],
+      "owner_role": "authority_ops"
+    },
+    "incident_response_plan": {
+      "name": "Incident Response Plan",
+      "primary_tier": "T3",
+      "producing_tiers": [
+        "T1",
+        "T2",
+        "T3"
+      ],
+      "frameworks_served": [
+        "ISO42001",
+        "EU_AI_Act",
+        "NIST_RMF"
+      ],
+      "framework_count": 3,
+      "ucs_served": [
+        "UC-12"
+      ],
+      "owner_role": "authority_ops"
+    },
+    "incident_ticket_log": {
+      "name": "Incident Ticket Log",
+      "primary_tier": "T3",
+      "producing_tiers": [
+        "T3"
+      ],
+      "frameworks_served": [
+        "ISO42001",
+        "EU_AI_Act",
+        "NIST_RMF"
+      ],
+      "framework_count": 3,
+      "ucs_served": [
+        "UC-12"
+      ],
+      "owner_role": "authority_ops"
+    },
+    "model_change_notice": {
+      "name": "Model Change Notice",
+      "primary_tier": "T3",
+      "producing_tiers": [
+        "T3"
+      ],
+      "frameworks_served": [
+        "ISO42001",
+        "EU_AI_Act",
+        "NIST_RMF"
+      ],
+      "framework_count": 3,
+      "ucs_served": [
+        "UC-07",
+        "UC-12"
+      ],
+      "owner_role": "authority_ops"
+    },
+    "deployment_record": {
+      "name": "Deployment Record",
+      "primary_tier": "T3",
+      "producing_tiers": [
+        "T3"
+      ],
+      "frameworks_served": [
+        "ISO42001",
+        "EU_AI_Act"
+      ],
+      "framework_count": 2,
+      "ucs_served": [
+        "UC-07"
+      ],
+      "owner_role": "authority_ops"
+    },
+    "post_deployment_monitoring": {
+      "name": "Post-Deployment Monitoring Report",
+      "primary_tier": "T3",
+      "producing_tiers": [
+        "T3"
+      ],
+      "frameworks_served": [
+        "ISO42001",
+        "EU_AI_Act",
+        "NIST_RMF"
+      ],
+      "framework_count": 3,
+      "ucs_served": [
+        "UC-12"
+      ],
+      "owner_role": "authority_ops"
+    },
+    "rsu_config_baseline": {
+      "name": "RSU Configuration Baseline",
+      "primary_tier": "T2",
+      "producing_tiers": [
+        "T2"
+      ],
+      "frameworks_served": [
+        "ISO42001",
+        "EU_AI_Act"
+      ],
+      "framework_count": 2,
+      "ucs_served": [
+        "UC-07",
+        "UC-10"
+      ],
+      "owner_role": "integrator"
+    },
+    "monitoring_alerting_plan": {
+      "name": "Monitoring & Alerting Plan",
+      "primary_tier": "T2",
+      "producing_tiers": [
+        "T2",
+        "T3"
+      ],
+      "frameworks_served": [
+        "ISO42001",
+        "EU_AI_Act",
+        "NIST_RMF"
+      ],
+      "framework_count": 3,
+      "ucs_served": [
+        "UC-12"
+      ],
+      "owner_role": "integrator"
+    }
+  },
+  "evidence_metrics": {
+    "unified_artifacts": 20,
+    "siloed_baseline": 37,
+    "reduction_count": 17,
+    "reduction_percentage": 45.9,
+    "avg_reuse_factor": 2.8,
+    "three_framework_artifacts": 16,
+    "three_framework_percentage": 80.0
+  },
+  "traceability": {
+    "traceability_score": 100.0,
+    "status": "COMPLETE",
+    "forward_links_verified": 141,
+    "forward_links_broken": 0,
+    "broken_link_details": []
+  },
+  "framework_coverage": {
+    "ISO42001": {
+      "label": "ISO/IEC 42001",
+      "total_obligations": 55,
+      "covered_obligations": 52,
+      "coverage_percentage": 94.5,
+      "gap_count": 3,
+      "gaps": [
+        {
+          "id": "A.GAP.SC",
+          "description": "Supply chain audit programme governance",
+          "gap_category": "organizational_procedure"
+        },
+        {
+          "id": "A.GAP.IA",
+          "description": "Internal audit workflow",
+          "gap_category": "organizational_procedure"
+        },
+        {
+          "id": "A.GAP.MR",
+          "description": "Management review workflow",
+          "gap_category": "organizational_procedure"
+        }
+      ]
+    },
+    "EU_AI_Act": {
+      "label": "EU AI Act",
+      "total_obligations": 37,
+      "covered_obligations": 34,
+      "coverage_percentage": 91.9,
+      "gap_count": 3,
+      "gaps": [
+        {
+          "id": "Art.GAP.CA",
+          "description": "Conformity assessment procedure",
+          "gap_category": "regulatory_workflow"
+        },
+        {
+          "id": "Art.GAP.REG",
+          "description": "EU database registration",
+          "gap_category": "regulatory_workflow"
+        },
+        {
+          "id": "Art.GAP.CE",
+          "description": "CE marking and declaration of conformity",
+          "gap_category": "regulatory_workflow"
+        }
+      ]
+    },
+    "NIST_RMF": {
+      "label": "NIST AI RMF",
+      "total_obligations": 62,
+      "covered_obligations": 55,
+      "coverage_percentage": 88.7,
+      "gap_count": 7,
+      "gaps": [
+        {
+          "id": "NIST.GAP.1",
+          "description": "Organizational context mapping and profiling",
+          "gap_category": "context_setting"
+        },
+        {
+          "id": "NIST.GAP.2",
+          "description": "AI system lifecycle definition",
+          "gap_category": "context_setting"
+        },
+        {
+          "id": "NIST.GAP.3",
+          "description": "Stakeholder engagement planning",
+          "gap_category": "context_setting"
+        },
+        {
+          "id": "NIST.GAP.4",
+          "description": "Participatory design process documentation",
+          "gap_category": "context_setting"
+        },
+        {
+          "id": "NIST.GAP.5",
+          "description": "Cost-benefit threshold setting",
+          "gap_category": "context_setting"
+        },
+        {
+          "id": "NIST.GAP.6",
+          "description": "Organizational AI maturity self-assessment",
+          "gap_category": "context_setting"
+        },
+        {
+          "id": "NIST.GAP.7",
+          "description": "Cross-functional team composition requirements",
+          "gap_category": "context_setting"
+        }
+      ]
+    },
+    "average": {
+      "coverage_percentage": 91.7
+    }
+  },
+  "gap_analysis": {
+    "total_gaps": 13,
+    "categories": {
+      "tier_not_present": {
+        "count": 0,
+        "obligations": []
+      },
+      "organizational_procedure": {
+        "count": 3,
+        "obligations": [
+          {
+            "id": "A.GAP.SC",
+            "framework": "ISO42001",
+            "description": "Supply chain audit programme governance"
+          },
+          {
+            "id": "A.GAP.IA",
+            "framework": "ISO42001",
+            "description": "Internal audit workflow"
+          },
+          {
+            "id": "A.GAP.MR",
+            "framework": "ISO42001",
+            "description": "Management review workflow"
+          }
+        ]
+      },
+      "regulatory_workflow": {
+        "count": 3,
+        "obligations": [
+          {
+            "id": "Art.GAP.CA",
+            "framework": "EU_AI_Act",
+            "description": "Conformity assessment procedure"
+          },
+          {
+            "id": "Art.GAP.REG",
+            "framework": "EU_AI_Act",
+            "description": "EU database registration"
+          },
+          {
+            "id": "Art.GAP.CE",
+            "framework": "EU_AI_Act",
+            "description": "CE marking and declaration of conformity"
+          }
+        ]
+      },
+      "context_setting": {
+        "count": 7,
+        "obligations": [
+          {
+            "id": "NIST.GAP.1",
+            "framework": "NIST_RMF",
+            "description": "Organizational context mapping and profiling"
+          },
+          {
+            "id": "NIST.GAP.2",
+            "framework": "NIST_RMF",
+            "description": "AI system lifecycle definition"
+          },
+          {
+            "id": "NIST.GAP.3",
+            "framework": "NIST_RMF",
+            "description": "Stakeholder engagement planning"
+          },
+          {
+            "id": "NIST.GAP.4",
+            "framework": "NIST_RMF",
+            "description": "Participatory design process documentation"
+          },
+          {
+            "id": "NIST.GAP.5",
+            "framework": "NIST_RMF",
+            "description": "Cost-benefit threshold setting"
+          },
+          {
+            "id": "NIST.GAP.6",
+            "framework": "NIST_RMF",
+            "description": "Organizational AI maturity self-assessment"
+          },
+          {
+            "id": "NIST.GAP.7",
+            "framework": "NIST_RMF",
+            "description": "Cross-functional team composition requirements"
+          }
+        ]
+      }
+    }
+  },
+  "coverage_depth": {
+    "overall_depth": 0.683,
+    "component_density": 0.583,
+    "risk_factor": 0.571,
+    "stakeholder_breadth": 1.0,
+    "interpretation": "Substantial"
+  },
+  "consolidation": {
+    "total_source_obligations": 154,
+    "total_unified_controls": 12,
+    "overall_consolidation_ratio": 92.2,
+    "per_domain": {
+      "D1": {
+        "name": "Risk Management",
+        "iso_count": 23,
+        "eu_count": 13,
+        "nist_count": 17,
+        "total_source": 53,
+        "unified_controls": 2,
+        "active_controls": 2,
+        "consolidation_ratio": 96.2
+      },
+      "D2": {
+        "name": "Data Governance",
+        "iso_count": 7,
+        "eu_count": 4,
+        "nist_count": 7,
+        "total_source": 18,
+        "unified_controls": 2,
+        "active_controls": 2,
+        "consolidation_ratio": 88.9
+      },
+      "D3": {
+        "name": "Human Oversight",
+        "iso_count": 5,
+        "eu_count": 4,
+        "nist_count": 5,
+        "total_source": 14,
+        "unified_controls": 2,
+        "active_controls": 2,
+        "consolidation_ratio": 85.7
+      },
+      "D4": {
+        "name": "Transparency",
+        "iso_count": 3,
+        "eu_count": 2,
+        "nist_count": 3,
+        "total_source": 8,
+        "unified_controls": 1,
+        "active_controls": 1,
+        "consolidation_ratio": 87.5
+      },
+      "D5": {
+        "name": "Accuracy & Robustness",
+        "iso_count": 4,
+        "eu_count": 4,
+        "nist_count": 10,
+        "total_source": 18,
+        "unified_controls": 2,
+        "active_controls": 2,
+        "consolidation_ratio": 88.9
+      },
+      "D6": {
+        "name": "Documentation",
+        "iso_count": 5,
+        "eu_count": 5,
+        "nist_count": 8,
+        "total_source": 18,
+        "unified_controls": 1,
+        "active_controls": 1,
+        "consolidation_ratio": 94.4
+      },
+      "D7": {
+        "name": "Supply Chain",
+        "iso_count": 2,
+        "eu_count": 2,
+        "nist_count": 4,
+        "total_source": 8,
+        "unified_controls": 1,
+        "active_controls": 1,
+        "consolidation_ratio": 87.5
+      },
+      "D8": {
+        "name": "Incident Management",
+        "iso_count": 6,
+        "eu_count": 3,
+        "nist_count": 8,
+        "total_source": 17,
+        "unified_controls": 1,
+        "active_controls": 1,
+        "consolidation_ratio": 94.1
+      }
+    }
+  },
+  "tier_dependencies": {
+    "total_chains": 5,
+    "chains": [
+      {
+        "chain_id": "incident_response_escalation",
+        "description": "Edge anomaly -> cloud triage -> controlled change -> redeploy",
+        "tiers_involved": [
+          "T2",
+          "T3"
+        ],
+        "ucs_involved": [
+          "UC-12",
+          "UC-07",
+          "UC-01",
+          "UC-02"
+        ],
+        "artifacts_in_chain": [
+          "monitoring_alerting_plan",
+          "incident_ticket_log",
+          "risk_register",
+          "model_change_notice"
+        ],
+        "chain_length": 4,
+        "completeness": 100.0
+      },
+      {
+        "chain_id": "model_update_governance",
+        "description": "Cloud training -> validation -> OTA -> edge deploy",
+        "tiers_involved": [
+          "T3",
+          "T2"
+        ],
+        "ucs_involved": [
+          "UC-09",
+          "UC-07",
+          "UC-10",
+          "UC-11"
+        ],
+        "artifacts_in_chain": [
+          "vv_test_report",
+          "technical_file",
+          "deployment_record",
+          "release_manifest"
+        ],
+        "chain_length": 4,
+        "completeness": 100.0
+      },
+      {
+        "chain_id": "data_quality_pipeline",
+        "description": "Edge sensors -> cloud aggregation -> quality report",
+        "tiers_involved": [
+          "T2",
+          "T3"
+        ],
+        "ucs_involved": [
+          "UC-03",
+          "UC-04"
+        ],
+        "artifacts_in_chain": [
+          "data_quality_report",
+          "bias_performance_report"
+        ],
+        "chain_length": 2,
+        "completeness": 100.0
+      },
+      {
+        "chain_id": "oversight_chain",
+        "description": "Vehicle operator -> edge status -> oversight monitoring",
+        "tiers_involved": [
+          "T1",
+          "T2"
+        ],
+        "ucs_involved": [
+          "UC-05",
+          "UC-06",
+          "UC-08"
+        ],
+        "artifacts_in_chain": [
+          "oversight_protocol",
+          "intervention_fallback_plan"
+        ],
+        "chain_length": 3,
+        "completeness": 100.0
+      },
+      {
+        "chain_id": "supplier_to_deployment",
+        "description": "Cloud supplier assessment -> integration -> validation",
+        "tiers_involved": [
+          "T3"
+        ],
+        "ucs_involved": [
+          "UC-11",
+          "UC-07",
+          "UC-09"
+        ],
+        "artifacts_in_chain": [
+          "supplier_audit_report",
+          "technical_file"
+        ],
+        "chain_length": 3,
+        "completeness": 100.0
+      }
+    ],
+    "max_chain_length": 4,
+    "avg_chain_length": 3.2
+  },
+  "execution_time_ms": 0.42
+}

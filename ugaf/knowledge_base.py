@@ -1,0 +1,472 @@
+"""
+UGAF-ITS Knowledge Base v1.1
+==============================
+Corrected obligation counts: 55 ISO + 37 EU + 62 NIST = 154 total.
+
+Source obligations are the Phase 1 extraction outputs (Section V-A),
+NOT the structural framework counts (38+45+72=155). The extraction
+decomposes clause-level PDCA requirements and scopes out items that
+fall outside the technical control perimeter.
+"""
+
+# =====================================================================
+# GOVERNANCE DOMAINS — 8 domains (Table 5)
+# =====================================================================
+
+GOVERNANCE_DOMAINS = {
+    "D1": {"name": "Risk Management", "unified_controls": ["UC-01", "UC-02"]},
+    "D2": {"name": "Data Governance", "unified_controls": ["UC-03", "UC-04"]},
+    "D3": {"name": "Human Oversight", "unified_controls": ["UC-05", "UC-06"]},
+    "D4": {"name": "Transparency", "unified_controls": ["UC-08"]},
+    "D5": {"name": "Accuracy & Robustness", "unified_controls": ["UC-09", "UC-10"]},
+    "D6": {"name": "Documentation", "unified_controls": ["UC-07"]},
+    "D7": {"name": "Supply Chain", "unified_controls": ["UC-11"]},
+    "D8": {"name": "Incident Management", "unified_controls": ["UC-12"]},
+}
+
+# =====================================================================
+# UNIFIED CONTROLS — UC-01 through UC-12 (Table 6)
+# =====================================================================
+
+UNIFIED_CONTROLS = {
+    "UC-01": {
+        "name": "AI Risk Assessment", "domain": "D1",
+        "objective": "Identify and evaluate AI-specific risks incl. safety, bias, and security",
+        "iso42001": ["Cl.6.1", "A.4.1", "A.4.2", "A.4.3"],
+        "eu_ai_act": ["Art.9(2a)", "Art.9(2b)", "Art.9(2c)"],
+        "nist_rmf": ["MAP.5.1", "MAP.5.2"],
+        "tier_activation": {"T1": True, "T2": True, "T3": True},
+        "primary_artifact": "risk_register",
+        "lifecycle_phases": ["design", "monitor", "change"],
+    },
+    "UC-02": {
+        "name": "Risk Treatment Planning", "domain": "D1",
+        "objective": "Implement controls to mitigate identified risks to acceptable levels",
+        "iso42001": ["Cl.8.3", "A.5.1", "A.5.2"],
+        "eu_ai_act": ["Art.9(2d)", "Art.9(5)"],
+        "nist_rmf": ["MG.1.2", "MG.1.3", "MG.1.4"],
+        "tier_activation": {"T1": True, "T2": True, "T3": True},
+        "primary_artifact": "risk_register",
+        "lifecycle_phases": ["design", "deploy", "change"],
+    },
+    "UC-03": {
+        "name": "Data Quality Assurance", "domain": "D2",
+        "objective": "Ensure training/validation data quality, completeness, representativeness",
+        "iso42001": ["A.7.1", "A.7.2", "A.7.3"],
+        "eu_ai_act": ["Art.10(1)", "Art.10(2)", "Art.10(3)", "Art.10(4)"],
+        "nist_rmf": ["MAP.2.3", "ME.2.6"],
+        "tier_activation": {"T1": False, "T2": True, "T3": True},
+        "primary_artifact": "data_quality_report",
+        "lifecycle_phases": ["design", "build", "monitor"],
+    },
+    "UC-04": {
+        "name": "Bias Detection & Mitigation", "domain": "D2",
+        "objective": "Monitor for and address unfair bias in data and model outputs",
+        "iso42001": ["A.7.4"],
+        "eu_ai_act": ["Art.10(2f)", "Art.10(2g)"],
+        "nist_rmf": ["ME.2.10", "ME.2.11"],
+        "tier_activation": {"T1": False, "T2": True, "T3": True},
+        "primary_artifact": "data_quality_report",
+        "lifecycle_phases": ["build", "monitor"],
+    },
+    "UC-05": {
+        "name": "Human Oversight Design", "domain": "D3",
+        "objective": "Design systems enabling effective human understanding and intervention",
+        "iso42001": ["Cl.5.1", "A.15.1", "A.15.2"],
+        "eu_ai_act": ["Art.14(1)", "Art.14(2)", "Art.14(3)"],
+        "nist_rmf": ["GV.3.2", "MAP.3.5"],
+        "tier_activation": {"T1": True, "T2": True, "T3": False},
+        "primary_artifact": "oversight_protocol",
+        "lifecycle_phases": ["design", "build"],
+    },
+    "UC-06": {
+        "name": "Override & Intervention", "domain": "D3",
+        "objective": "Implement mechanisms for human override and safe system interruption",
+        "iso42001": ["A.15.3", "A.15.4"],
+        "eu_ai_act": ["Art.14(4)", "Art.14(5)"],
+        "nist_rmf": ["MG.2.4"],
+        "tier_activation": {"T1": True, "T2": True, "T3": False},
+        "primary_artifact": "oversight_protocol",
+        "lifecycle_phases": ["design", "deploy", "monitor"],
+    },
+    "UC-07": {
+        "name": "System Documentation", "domain": "D6",
+        "objective": "Maintain comprehensive technical documentation for audit and compliance",
+        "iso42001": ["Cl.7.5", "A.12"],
+        "eu_ai_act": ["Art.11", "Annex_IV"],
+        "nist_rmf": ["GV.1.3", "GV.1.4", "GV.1.5", "ME.2.1"],
+        "tier_activation": {"T1": True, "T2": True, "T3": True},
+        "primary_artifact": "technical_file",
+        "lifecycle_phases": ["design", "build", "deploy", "change"],
+    },
+    "UC-08": {
+        "name": "Transparency Communication", "domain": "D4",
+        "objective": "Provide information on AI system capabilities and limitations",
+        "iso42001": ["A.13", "A.14"],
+        "eu_ai_act": ["Art.13(2)", "Art.13(3)"],
+        "nist_rmf": ["GV.4.1", "GV.4.2", "GV.4.3", "MAP.5.2"],
+        "tier_activation": {"T1": True, "T2": True, "T3": True},
+        "primary_artifact": "instructions_for_use",
+        "lifecycle_phases": ["deploy"],
+    },
+    "UC-09": {
+        "name": "Accuracy Validation", "domain": "D5",
+        "objective": "Validate AI accuracy and performance against defined metrics",
+        "iso42001": ["A.9"],
+        "eu_ai_act": ["Art.15(1)", "Art.15(2)", "Art.15(3)"],
+        "nist_rmf": ["ME.2.5"],
+        "tier_activation": {"T1": True, "T2": True, "T3": True},
+        "primary_artifact": "vv_test_report",
+        "lifecycle_phases": ["build", "deploy"],
+    },
+    "UC-10": {
+        "name": "Robustness & Security", "domain": "D5",
+        "objective": "Test resilience to perturbations, adversarial inputs, and cyber threats",
+        "iso42001": ["A.10"],
+        "eu_ai_act": ["Art.15(4)", "Art.15(5)"],
+        "nist_rmf": ["ME.2.7", "ME.2.9"],
+        "tier_activation": {"T1": True, "T2": True, "T3": True},
+        "primary_artifact": "vv_test_report",
+        "lifecycle_phases": ["build", "deploy", "monitor"],
+    },
+    "UC-11": {
+        "name": "Supplier AI Assessment", "domain": "D7",
+        "objective": "Evaluate and monitor third-party AI components and services",
+        "iso42001": ["A.18"],
+        "eu_ai_act": ["Art.25"],
+        "nist_rmf": ["GV.6.1", "MG.3.1"],
+        "tier_activation": {"T1": False, "T2": False, "T3": True},
+        "primary_artifact": "supplier_audit_report",
+        "lifecycle_phases": ["build", "change"],
+    },
+    "UC-12": {
+        "name": "Incident Response", "domain": "D8",
+        "objective": "Detect, respond to, and learn from AI system incidents and anomalies",
+        "iso42001": ["Cl.10.1", "A.16", "A.17"],
+        "eu_ai_act": ["Art.9(7)", "Art.72"],
+        "nist_rmf": ["ME.3.1", "MG.4.1", "MG.4.2", "MG.4.3"],
+        "tier_activation": {"T1": True, "T2": True, "T3": True},
+        "primary_artifact": "incident_response_plan",
+        "lifecycle_phases": ["monitor", "change"],
+    },
+}
+
+# ===== SOURCE_OBLIGATIONS START (auto-generated) =====
+
+SOURCE_OBLIGATIONS = {}
+
+def _add(framework, items):
+    for it in items:
+        oid = f"{framework}:{it['id']}"
+        SOURCE_OBLIGATIONS[oid] = {
+            "framework": framework, "id": it["id"],
+            "description": it["desc"], "domain": it["domain"],
+            "mapped_uc": it.get("uc"),
+            "tier_applicability": it.get("tiers", ["T1", "T2", "T3"]),
+            "gap_category": it.get("gap"),
+        }
+
+# ----- ISO42001: 55 obligations (52 mapped + 3 gaps) -----
+_add("ISO42001", [
+    {"id": "Cl.4.1", "desc": "Understanding the organization and its context", "domain": "D1", "uc": "UC-01"},
+    {"id": "Cl.4.2", "desc": "Understanding needs of interested parties", "domain": "D1", "uc": "UC-01"},
+    {"id": "Cl.4.3", "desc": "Determining scope of the AIMS", "domain": "D1", "uc": "UC-01"},
+    {"id": "Cl.4.4", "desc": "AI management system establishment", "domain": "D1", "uc": "UC-01"},
+    {"id": "Cl.5.2", "desc": "AI policy establishment", "domain": "D1", "uc": "UC-01"},
+    {"id": "Cl.5.3", "desc": "Organizational roles and responsibilities", "domain": "D1", "uc": "UC-01"},
+    {"id": "Cl.6.1", "desc": "Actions to address risks and opportunities", "domain": "D1", "uc": "UC-01"},
+    {"id": "Cl.7.1", "desc": "Resources for the AIMS", "domain": "D1", "uc": "UC-01"},
+    {"id": "Cl.8.2", "desc": "AI risk assessment execution", "domain": "D1", "uc": "UC-01"},
+    {"id": "A.2.2", "desc": "AI policy", "domain": "D1", "uc": "UC-01"},
+    {"id": "A.2.3", "desc": "Roles and responsibilities for AI", "domain": "D1", "uc": "UC-01"},
+    {"id": "A.3.2", "desc": "Resources for AI system lifecycle", "domain": "D1", "uc": "UC-01"},
+    {"id": "A.4.1", "desc": "AI risk identification", "domain": "D1", "uc": "UC-01"},
+    {"id": "A.4.2", "desc": "AI risk analysis and evaluation", "domain": "D1", "uc": "UC-01"},
+    {"id": "A.4.3", "desc": "AI risk criteria and acceptance", "domain": "D1", "uc": "UC-01"},
+    {"id": "A.6.2.2", "desc": "Change impact assessment", "domain": "D1", "uc": "UC-01"},
+    {"id": "A.8.1", "desc": "AI system impact assessment", "domain": "D1", "uc": "UC-01"},
+    {"id": "A.8.2", "desc": "Impact on affected individuals", "domain": "D1", "uc": "UC-01"},
+    {"id": "A.5.1", "desc": "Risk treatment option selection", "domain": "D1", "uc": "UC-02"},
+    {"id": "A.5.2", "desc": "Risk treatment plan implementation", "domain": "D1", "uc": "UC-02"},
+    {"id": "Cl.6.2", "desc": "AI objectives and planning to achieve them", "domain": "D1", "uc": "UC-02"},
+    {"id": "Cl.8.1", "desc": "Operational planning and control", "domain": "D1", "uc": "UC-02"},
+    {"id": "Cl.8.3", "desc": "AI risk treatment execution", "domain": "D1", "uc": "UC-02"},
+    {"id": "A.7.1", "desc": "Data quality management", "domain": "D2", "uc": "UC-03", "tiers": ["T2", "T3"]},
+    {"id": "A.7.2", "desc": "Data provenance and lineage", "domain": "D2", "uc": "UC-03", "tiers": ["T2", "T3"]},
+    {"id": "A.7.3", "desc": "Data representativeness assessment", "domain": "D2", "uc": "UC-03", "tiers": ["T2", "T3"]},
+    {"id": "A.6.2.3", "desc": "Model retraining governance", "domain": "D2", "uc": "UC-03", "tiers": ["T2", "T3"]},
+    {"id": "A.7.4", "desc": "Bias identification in data", "domain": "D2", "uc": "UC-04", "tiers": ["T2", "T3"]},
+    {"id": "A.3.3", "desc": "AI competence for data handling", "domain": "D2", "uc": "UC-03", "tiers": ["T2", "T3"]},
+    {"id": "Cl.7.2", "desc": "Competence of data management personnel", "domain": "D2", "uc": "UC-03", "tiers": ["T2", "T3"]},
+    {"id": "A.15.1", "desc": "Human oversight design requirements", "domain": "D3", "uc": "UC-05", "tiers": ["T1", "T2"]},
+    {"id": "A.15.2", "desc": "Operator competency and training", "domain": "D3", "uc": "UC-05", "tiers": ["T1", "T2"]},
+    {"id": "Cl.5.1", "desc": "Leadership commitment to oversight", "domain": "D3", "uc": "UC-05", "tiers": ["T1", "T2"]},
+    {"id": "A.15.3", "desc": "Override mechanism design", "domain": "D3", "uc": "UC-06", "tiers": ["T1", "T2"]},
+    {"id": "A.15.4", "desc": "Safe interruption capability", "domain": "D3", "uc": "UC-06", "tiers": ["T1", "T2"]},
+    {"id": "A.13", "desc": "Interpretability of AI outputs", "domain": "D4", "uc": "UC-08"},
+    {"id": "A.14", "desc": "Communication of AI capabilities and limitations", "domain": "D4", "uc": "UC-08"},
+    {"id": "A.3.4", "desc": "Awareness of AI management system", "domain": "D4", "uc": "UC-08"},
+    {"id": "A.9", "desc": "Performance and accuracy validation", "domain": "D5", "uc": "UC-09"},
+    {"id": "A.6.1.2", "desc": "Pre-deployment validation requirements", "domain": "D5", "uc": "UC-09"},
+    {"id": "A.10", "desc": "Robustness and resilience testing", "domain": "D5", "uc": "UC-10"},
+    {"id": "Cl.7.3", "desc": "Awareness of accuracy objectives", "domain": "D5", "uc": "UC-09"},
+    {"id": "A.12", "desc": "AI system documentation controls", "domain": "D6", "uc": "UC-07"},
+    {"id": "A.6.1.1", "desc": "AI lifecycle process documentation", "domain": "D6", "uc": "UC-07"},
+    {"id": "A.6.1.3", "desc": "Deployment criteria and approval", "domain": "D6", "uc": "UC-07"},
+    {"id": "Cl.7.5", "desc": "Documented information requirements", "domain": "D6", "uc": "UC-07"},
+    {"id": "A.6.2.1", "desc": "Methods for AI system change documentation", "domain": "D6", "uc": "UC-07"},
+    {"id": "A.18", "desc": "Third-party AI component assessment", "domain": "D7", "uc": "UC-11", "tiers": ["T3"]},
+    {"id": "A.GAP.SC", "desc": "Supply chain audit programme governance", "domain": "D7", "uc": None, "gap": "organizational_procedure"},
+    {"id": "A.16", "desc": "AI system monitoring controls", "domain": "D8", "uc": "UC-12"},
+    {"id": "A.17", "desc": "AI incident handling", "domain": "D8", "uc": "UC-12"},
+    {"id": "Cl.10.1", "desc": "Nonconformity and corrective action", "domain": "D8", "uc": "UC-12"},
+    {"id": "Cl.7.4", "desc": "Communication processes for incidents", "domain": "D8", "uc": "UC-12"},
+    {"id": "A.GAP.IA", "desc": "Internal audit workflow", "domain": "D8", "uc": None, "gap": "organizational_procedure"},
+    {"id": "A.GAP.MR", "desc": "Management review workflow", "domain": "D8", "uc": None, "gap": "organizational_procedure"},
+])
+
+# ----- EU_AI_Act: 37 obligations (34 mapped + 3 gaps) -----
+_add("EU_AI_Act", [
+    {"id": "Art.9(1)", "desc": "Establish risk management system", "domain": "D1", "uc": "UC-01"},
+    {"id": "Art.9(2a)", "desc": "Identify and analyse foreseeable risks", "domain": "D1", "uc": "UC-01"},
+    {"id": "Art.9(2b)", "desc": "Estimate and evaluate risks from intended use and misuse", "domain": "D1", "uc": "UC-01"},
+    {"id": "Art.9(2c)", "desc": "Evaluate risks from data analysis", "domain": "D1", "uc": "UC-01"},
+    {"id": "Art.9(2d)", "desc": "Adopt risk management measures", "domain": "D1", "uc": "UC-02"},
+    {"id": "Art.9(3)", "desc": "Testing for risk management measures", "domain": "D1", "uc": "UC-02"},
+    {"id": "Art.9(4)", "desc": "Appropriate risk management measures shall be taken", "domain": "D1", "uc": "UC-02"},
+    {"id": "Art.9(5)", "desc": "Test risk management measures effectiveness", "domain": "D1", "uc": "UC-02"},
+    {"id": "Art.9(6)", "desc": "Risk management throughout lifecycle", "domain": "D1", "uc": "UC-01"},
+    {"id": "Art.9(8)", "desc": "Risk management integration with product safety", "domain": "D1", "uc": "UC-01"},
+    {"id": "Art.9(9)", "desc": "Risk management measures proportionality", "domain": "D1", "uc": "UC-02"},
+    {"id": "Art.8(1)", "desc": "Compliance with high-risk requirements", "domain": "D1", "uc": "UC-01"},
+    {"id": "Art.8(2)", "desc": "Intended purpose consideration in requirements", "domain": "D1", "uc": "UC-01"},
+    {"id": "Art.10(1)", "desc": "Data governance practices for training data", "domain": "D2", "uc": "UC-03", "tiers": ["T2", "T3"]},
+    {"id": "Art.10(2)", "desc": "Design choices for datasets", "domain": "D2", "uc": "UC-03", "tiers": ["T2", "T3"]},
+    {"id": "Art.10(2f)", "desc": "Examination for possible biases", "domain": "D2", "uc": "UC-04", "tiers": ["T2", "T3"]},
+    {"id": "Art.10(2g)", "desc": "Identify data gaps and shortcomings", "domain": "D2", "uc": "UC-04", "tiers": ["T2", "T3"]},
+    {"id": "Art.14(1)", "desc": "Design for effective human oversight", "domain": "D3", "uc": "UC-05", "tiers": ["T1", "T2"]},
+    {"id": "Art.14(2)", "desc": "Understand capabilities and limitations", "domain": "D3", "uc": "UC-05", "tiers": ["T1", "T2"]},
+    {"id": "Art.14(3)", "desc": "Monitor operation and detect anomalies", "domain": "D3", "uc": "UC-05", "tiers": ["T1", "T2"]},
+    {"id": "Art.14(4)", "desc": "Override or interrupt operation", "domain": "D3", "uc": "UC-06", "tiers": ["T1", "T2"]},
+    {"id": "Art.13(1)", "desc": "Design for sufficient transparency", "domain": "D4", "uc": "UC-08"},
+    {"id": "Art.13(2)", "desc": "Instructions for use content requirements", "domain": "D4", "uc": "UC-08"},
+    {"id": "Art.15(1)", "desc": "Appropriate levels of accuracy", "domain": "D5", "uc": "UC-09"},
+    {"id": "Art.15(2)", "desc": "Accuracy metrics declaration", "domain": "D5", "uc": "UC-09"},
+    {"id": "Art.15(4)", "desc": "Robustness against adversarial manipulation", "domain": "D5", "uc": "UC-10"},
+    {"id": "Art.15(5)", "desc": "Cybersecurity measures", "domain": "D5", "uc": "UC-10"},
+    {"id": "Art.11(1)", "desc": "Draw up technical documentation before placement", "domain": "D6", "uc": "UC-07"},
+    {"id": "Art.11(2)", "desc": "Keep technical documentation up to date", "domain": "D6", "uc": "UC-07"},
+    {"id": "Annex_IV", "desc": "Technical documentation content requirements", "domain": "D6", "uc": "UC-07"},
+    {"id": "Art.GAP.CA", "desc": "Conformity assessment procedure", "domain": "D6", "uc": None, "gap": "regulatory_workflow"},
+    {"id": "Art.GAP.REG", "desc": "EU database registration", "domain": "D6", "uc": None, "gap": "regulatory_workflow"},
+    {"id": "Art.25", "desc": "Responsibilities along the AI value chain", "domain": "D7", "uc": "UC-11", "tiers": ["T3"]},
+    {"id": "Art.GAP.CE", "desc": "CE marking and declaration of conformity", "domain": "D7", "uc": None, "gap": "regulatory_workflow"},
+    {"id": "Art.9(7)", "desc": "Post-deployment monitoring for incidents", "domain": "D8", "uc": "UC-12"},
+    {"id": "Art.72", "desc": "Report serious incidents to authorities", "domain": "D8", "uc": "UC-12"},
+    {"id": "Art.14(5)", "desc": "Decide not to use or disregard output", "domain": "D8", "uc": "UC-12"},
+])
+
+# ----- NIST_RMF: 62 obligations (55 mapped + 7 gaps) -----
+_add("NIST_RMF", [
+    {"id": "GV.1.1", "desc": "Legal and regulatory requirements identified", "domain": "D1", "uc": "UC-01"},
+    {"id": "GV.1.2", "desc": "Trustworthy AI characteristics prioritised", "domain": "D1", "uc": "UC-01"},
+    {"id": "MAP.1.1", "desc": "Intended purpose and context documented", "domain": "D1", "uc": "UC-01"},
+    {"id": "MAP.1.5", "desc": "Organizational risk tolerance calibrated", "domain": "D1", "uc": "UC-01"},
+    {"id": "MAP.5.1", "desc": "Risks identified systematically", "domain": "D1", "uc": "UC-01"},
+    {"id": "MAP.5.2", "desc": "Risks analysed and prioritised", "domain": "D1", "uc": "UC-01"},
+    {"id": "MG.1.1", "desc": "Risk prioritisation completed", "domain": "D1", "uc": "UC-02"},
+    {"id": "MG.1.2", "desc": "Risk response selection", "domain": "D1", "uc": "UC-02"},
+    {"id": "MG.1.3", "desc": "Risk response implementation", "domain": "D1", "uc": "UC-02"},
+    {"id": "MG.1.4", "desc": "Risk response effectiveness monitored", "domain": "D1", "uc": "UC-02"},
+    {"id": "NIST.GAP.1", "desc": "Organizational context mapping and profiling", "domain": "D1", "uc": None, "gap": "context_setting"},
+    {"id": "NIST.GAP.2", "desc": "AI system lifecycle definition", "domain": "D1", "uc": None, "gap": "context_setting"},
+    {"id": "NIST.GAP.3", "desc": "Stakeholder engagement planning", "domain": "D1", "uc": None, "gap": "context_setting"},
+    {"id": "NIST.GAP.4", "desc": "Participatory design process documentation", "domain": "D1", "uc": None, "gap": "context_setting"},
+    {"id": "NIST.GAP.5", "desc": "Cost-benefit threshold setting", "domain": "D1", "uc": None, "gap": "context_setting"},
+    {"id": "NIST.GAP.6", "desc": "Organizational AI maturity self-assessment", "domain": "D1", "uc": None, "gap": "context_setting"},
+    {"id": "NIST.GAP.7", "desc": "Cross-functional team composition requirements", "domain": "D1", "uc": None, "gap": "context_setting"},
+    {"id": "MAP.2.1", "desc": "Data acquisition methods documented", "domain": "D2", "uc": "UC-03", "tiers": ["T2", "T3"]},
+    {"id": "MAP.2.2", "desc": "Data labeling practices assessed", "domain": "D2", "uc": "UC-03", "tiers": ["T2", "T3"]},
+    {"id": "MAP.2.3", "desc": "Data quality assessment performed", "domain": "D2", "uc": "UC-03", "tiers": ["T2", "T3"]},
+    {"id": "ME.2.6", "desc": "Data robustness testing performed", "domain": "D2", "uc": "UC-03", "tiers": ["T2", "T3"]},
+    {"id": "ME.2.10", "desc": "Fairness evaluation performed", "domain": "D2", "uc": "UC-04", "tiers": ["T2", "T3"]},
+    {"id": "ME.2.11", "desc": "Bias monitoring in production", "domain": "D2", "uc": "UC-04", "tiers": ["T2", "T3"]},
+    {"id": "MAP.1.6", "desc": "System data requirements and constraints", "domain": "D2", "uc": "UC-03", "tiers": ["T2", "T3"]},
+    {"id": "GV.3.2", "desc": "Human oversight mechanisms defined", "domain": "D3", "uc": "UC-05", "tiers": ["T1", "T2"]},
+    {"id": "MAP.3.5", "desc": "Human-AI interaction mapped", "domain": "D3", "uc": "UC-05", "tiers": ["T1", "T2"]},
+    {"id": "MAP.3.1", "desc": "Benefits assessment for oversight context", "domain": "D3", "uc": "UC-05", "tiers": ["T1", "T2"]},
+    {"id": "MG.2.4", "desc": "Override and intervention mechanisms", "domain": "D3", "uc": "UC-06", "tiers": ["T1", "T2"]},
+    {"id": "MAP.4.1", "desc": "Risk mapping for oversight requirements", "domain": "D3", "uc": "UC-06", "tiers": ["T1", "T2"]},
+    {"id": "GV.4.1", "desc": "Organizational transparency policies", "domain": "D4", "uc": "UC-08"},
+    {"id": "GV.4.2", "desc": "Documentation of AI systems for stakeholders", "domain": "D4", "uc": "UC-08"},
+    {"id": "GV.4.3", "desc": "Stakeholder communication mechanisms", "domain": "D4", "uc": "UC-08"},
+    {"id": "ME.1.1", "desc": "Measurement approaches defined", "domain": "D5", "uc": "UC-09"},
+    {"id": "ME.1.2", "desc": "Metrics selected for AI system evaluation", "domain": "D5", "uc": "UC-09"},
+    {"id": "ME.1.3", "desc": "Measurement frequency established", "domain": "D5", "uc": "UC-09"},
+    {"id": "ME.2.3", "desc": "Metrics tracked over time", "domain": "D5", "uc": "UC-09"},
+    {"id": "ME.2.5", "desc": "Accuracy validated against defined metrics", "domain": "D5", "uc": "UC-09"},
+    {"id": "ME.2.7", "desc": "Adversarial resilience evaluated", "domain": "D5", "uc": "UC-10"},
+    {"id": "ME.2.9", "desc": "Cybersecurity assessment completed", "domain": "D5", "uc": "UC-10"},
+    {"id": "MAP.4.2", "desc": "Risk model for accuracy requirements", "domain": "D5", "uc": "UC-09"},
+    {"id": "MG.2.1", "desc": "Accuracy response plans documented", "domain": "D5", "uc": "UC-10"},
+    {"id": "MG.2.2", "desc": "Robustness contingency procedures", "domain": "D5", "uc": "UC-10"},
+    {"id": "GV.1.3", "desc": "AI risk management processes documented", "domain": "D6", "uc": "UC-07"},
+    {"id": "GV.1.4", "desc": "Risk management integrated into organizational processes", "domain": "D6", "uc": "UC-07"},
+    {"id": "GV.1.5", "desc": "Organizational AI policies established", "domain": "D6", "uc": "UC-07"},
+    {"id": "ME.2.1", "desc": "Evaluation documentation maintained", "domain": "D6", "uc": "UC-07"},
+    {"id": "MG.2.3", "desc": "Recovery protocols documented", "domain": "D6", "uc": "UC-07"},
+    {"id": "MAP.5.2a", "desc": "Risk analysis documentation", "domain": "D6", "uc": "UC-07"},
+    {"id": "ME.2.8", "desc": "Operational monitoring documentation", "domain": "D6", "uc": "UC-07"},
+    {"id": "ME.4.1", "desc": "Measurement results documentation", "domain": "D6", "uc": "UC-07"},
+    {"id": "GV.6.1", "desc": "Third-party risk policies established", "domain": "D7", "uc": "UC-11", "tiers": ["T3"]},
+    {"id": "GV.6.2", "desc": "Vendor assessment and monitoring procedures", "domain": "D7", "uc": "UC-11", "tiers": ["T3"]},
+    {"id": "MG.3.1", "desc": "Third-party risk management active", "domain": "D7", "uc": "UC-11", "tiers": ["T3"]},
+    {"id": "MG.3.2", "desc": "Vendor compliance monitoring", "domain": "D7", "uc": "UC-11", "tiers": ["T3"]},
+    {"id": "ME.3.1", "desc": "Risk monitoring processes active", "domain": "D8", "uc": "UC-12"},
+    {"id": "ME.3.2", "desc": "Performance monitoring established", "domain": "D8", "uc": "UC-12"},
+    {"id": "ME.3.3", "desc": "Anomaly detection operational", "domain": "D8", "uc": "UC-12"},
+    {"id": "ME.4.2", "desc": "Risk reporting to decision-makers", "domain": "D8", "uc": "UC-12"},
+    {"id": "MG.4.1", "desc": "Incident detection and response", "domain": "D8", "uc": "UC-12"},
+    {"id": "MG.4.2", "desc": "Incident classification and triage", "domain": "D8", "uc": "UC-12"},
+    {"id": "MG.4.3", "desc": "Corrective action implementation", "domain": "D8", "uc": "UC-12"},
+    {"id": "MG.4.4", "desc": "Lessons learned integration", "domain": "D8", "uc": "UC-12"},
+])
+
+# ===== SOURCE_OBLIGATIONS END (auto-generated) =====
+
+# =====================================================================
+# EVIDENCE ARTIFACTS — 20 unified artifacts (Section IV-F, Tables 5/7)
+# =====================================================================
+
+EVIDENCE_ARTIFACTS = {
+    "risk_register": {
+        "name": "Risk Register + Treatment Log", "primary_tier": "T3",
+        "producing_tiers": ["T1", "T2", "T3"],
+        "serves_frameworks": ["ISO42001", "EU_AI_Act", "NIST_RMF"],
+        "serves_ucs": ["UC-01", "UC-02"], "owner_role": "authority_ops",
+    },
+    "data_quality_report": {
+        "name": "Data Quality Report", "primary_tier": "T2",
+        "producing_tiers": ["T2", "T3"],
+        "serves_frameworks": ["ISO42001", "EU_AI_Act", "NIST_RMF"],
+        "serves_ucs": ["UC-03", "UC-04"], "owner_role": "integrator",
+    },
+    "bias_performance_report": {
+        "name": "Bias & Performance Report", "primary_tier": "T2",
+        "producing_tiers": ["T2", "T3"],
+        "serves_frameworks": ["ISO42001", "EU_AI_Act", "NIST_RMF"],
+        "serves_ucs": ["UC-04"], "owner_role": "integrator",
+    },
+    "oversight_protocol": {
+        "name": "Oversight Protocol", "primary_tier": "T1",
+        "producing_tiers": ["T1", "T2"],
+        "serves_frameworks": ["ISO42001", "EU_AI_Act", "NIST_RMF"],
+        "serves_ucs": ["UC-05", "UC-06"], "owner_role": "oem",
+    },
+    "intervention_fallback_plan": {
+        "name": "Intervention & Fallback Plan", "primary_tier": "T1",
+        "producing_tiers": ["T1", "T2"],
+        "serves_frameworks": ["ISO42001", "EU_AI_Act", "NIST_RMF"],
+        "serves_ucs": ["UC-06"], "owner_role": "oem",
+    },
+    "event_override_logs": {
+        "name": "Event & Override Logs", "primary_tier": "T1",
+        "producing_tiers": ["T1"],
+        "serves_frameworks": ["ISO42001", "EU_AI_Act"],
+        "serves_ucs": ["UC-06", "UC-12"], "owner_role": "oem",
+    },
+    "instructions_for_use": {
+        "name": "Instructions for Use", "primary_tier": "T3",
+        "producing_tiers": ["T1", "T2", "T3"],
+        "serves_frameworks": ["ISO42001", "EU_AI_Act", "NIST_RMF"],
+        "serves_ucs": ["UC-08"], "owner_role": "authority_ops",
+    },
+    "vv_test_report": {
+        "name": "V&V Test Report", "primary_tier": "T1",
+        "producing_tiers": ["T1", "T2", "T3"],
+        "serves_frameworks": ["ISO42001", "EU_AI_Act", "NIST_RMF"],
+        "serves_ucs": ["UC-09", "UC-10"], "owner_role": "oem",
+    },
+    "security_test_report": {
+        "name": "Security Test Report", "primary_tier": "T1",
+        "producing_tiers": ["T1", "T2", "T3"],
+        "serves_frameworks": ["ISO42001", "EU_AI_Act", "NIST_RMF"],
+        "serves_ucs": ["UC-10"], "owner_role": "oem",
+    },
+    "technical_file": {
+        "name": "Technical File", "primary_tier": "T3",
+        "producing_tiers": ["T1", "T2", "T3"],
+        "serves_frameworks": ["ISO42001", "EU_AI_Act", "NIST_RMF"],
+        "serves_ucs": ["UC-07"], "owner_role": "authority_ops",
+    },
+    "release_manifest": {
+        "name": "Release Manifest", "primary_tier": "T1",
+        "producing_tiers": ["T1"],
+        "serves_frameworks": ["ISO42001", "EU_AI_Act"],
+        "serves_ucs": ["UC-07", "UC-10"], "owner_role": "oem",
+    },
+    "supplier_audit_report": {
+        "name": "Supplier Audit Report", "primary_tier": "T3",
+        "producing_tiers": ["T3"],
+        "serves_frameworks": ["ISO42001", "EU_AI_Act", "NIST_RMF"],
+        "serves_ucs": ["UC-11"], "owner_role": "authority_ops",
+    },
+    "third_party_register": {
+        "name": "Third-Party Component Register", "primary_tier": "T3",
+        "producing_tiers": ["T3"],
+        "serves_frameworks": ["ISO42001", "EU_AI_Act", "NIST_RMF"],
+        "serves_ucs": ["UC-11"], "owner_role": "authority_ops",
+    },
+    "incident_response_plan": {
+        "name": "Incident Response Plan", "primary_tier": "T3",
+        "producing_tiers": ["T1", "T2", "T3"],
+        "serves_frameworks": ["ISO42001", "EU_AI_Act", "NIST_RMF"],
+        "serves_ucs": ["UC-12"], "owner_role": "authority_ops",
+    },
+    "incident_ticket_log": {
+        "name": "Incident Ticket Log", "primary_tier": "T3",
+        "producing_tiers": ["T3"],
+        "serves_frameworks": ["ISO42001", "EU_AI_Act", "NIST_RMF"],
+        "serves_ucs": ["UC-12"], "owner_role": "authority_ops",
+    },
+    "model_change_notice": {
+        "name": "Model Change Notice", "primary_tier": "T3",
+        "producing_tiers": ["T3"],
+        "serves_frameworks": ["ISO42001", "EU_AI_Act", "NIST_RMF"],
+        "serves_ucs": ["UC-07", "UC-12"], "owner_role": "authority_ops",
+    },
+    "deployment_record": {
+        "name": "Deployment Record", "primary_tier": "T3",
+        "producing_tiers": ["T3"],
+        "serves_frameworks": ["ISO42001", "EU_AI_Act"],
+        "serves_ucs": ["UC-07"], "owner_role": "authority_ops",
+    },
+    "post_deployment_monitoring": {
+        "name": "Post-Deployment Monitoring Report", "primary_tier": "T3",
+        "producing_tiers": ["T3"],
+        "serves_frameworks": ["ISO42001", "EU_AI_Act", "NIST_RMF"],
+        "serves_ucs": ["UC-12"], "owner_role": "authority_ops",
+    },
+    "rsu_config_baseline": {
+        "name": "RSU Configuration Baseline", "primary_tier": "T2",
+        "producing_tiers": ["T2"],
+        "serves_frameworks": ["ISO42001", "EU_AI_Act"],
+        "serves_ucs": ["UC-07", "UC-10"], "owner_role": "integrator",
+    },
+    "monitoring_alerting_plan": {
+        "name": "Monitoring & Alerting Plan", "primary_tier": "T2",
+        "producing_tiers": ["T2", "T3"],
+        "serves_frameworks": ["ISO42001", "EU_AI_Act", "NIST_RMF"],
+        "serves_ucs": ["UC-12"], "owner_role": "integrator",
+    },
+}
+
+# =====================================================================
+# SILOED BASELINE (Section VII-C)
+# =====================================================================
+SILOED_BASELINE = {
+    "ISO42001": {"document_count": 15},
+    "EU_AI_Act": {"document_count": 12},
+    "NIST_RMF": {"document_count": 10},
+}
+SILOED_TOTAL_DOCUMENTS = 37

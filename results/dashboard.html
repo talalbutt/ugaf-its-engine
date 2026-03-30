@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UGAF-ITS Governance Engine - Validation Dashboard</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<style>
+
+:root {
+  --iso:#1E3A6E;--eu:#7F1D1D;--nist:#14532D;
+  --brand:#0891B2;--good:#059669;--warn:#D97706;--bad:#DC2626;
+  --bg:#F1F5F9;--card:#FFFFFF;--text:#1E293B;--text2:#64748B;
+  --border:#E2E8F0;--radius:12px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  background:var(--bg);color:var(--text);line-height:1.6;}
+.header{background:linear-gradient(135deg,#0F172A 0%,#1E293B 100%);
+  color:white;padding:24px 40px;display:flex;justify-content:space-between;
+  align-items:center;flex-wrap:wrap;gap:16px;}
+.header-brand{display:flex;align-items:center;gap:16px;}
+.logo{font-size:36px;opacity:0.9;}
+.header h1{font-size:22px;font-weight:700;letter-spacing:-0.5px;}
+.header .subtitle{font-size:14px;opacity:0.7;font-weight:400;}
+.version{font-weight:400;opacity:0.6;font-size:16px;}
+.header-meta{display:flex;gap:8px;flex-wrap:wrap;}
+.meta-pill{background:rgba(255,255,255,0.12);padding:4px 14px;
+  border-radius:20px;font-size:13px;font-weight:500;}
+.panel{background:var(--card);margin:20px 24px;padding:32px;
+  border-radius:var(--radius);box-shadow:0 1px 3px rgba(0,0,0,0.06);}
+.panel-title{font-size:20px;font-weight:700;margin-bottom:4px;color:var(--text);}
+.panel-desc{font-size:14px;color:var(--text2);margin-bottom:24px;}
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:16px;}
+.kpi-card{padding:20px;border-radius:10px;border:1px solid var(--border);
+  text-align:center;transition:transform .15s;}
+.kpi-card:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,.08);}
+.kpi-value{font-size:32px;font-weight:800;line-height:1.1;margin-bottom:4px;}
+.kpi-label{font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;}
+.kpi-sub{font-size:12px;color:var(--text2);margin-top:4px;}
+.kpi-good .kpi-value{color:var(--good);}
+.kpi-brand .kpi-value{color:var(--brand);}
+.kpi-neutral .kpi-value{color:var(--text);}
+.chart-wrap{position:relative;height:340px;max-width:850px;margin:0 auto;}
+.chart-wrap-sm{position:relative;height:280px;}
+.chart-note{font-size:13px;color:var(--text2);margin-top:16px;padding:12px 16px;
+  background:#F8FAFC;border-left:3px solid var(--brand);border-radius:4px;}
+.split-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;}
+.chart-card{padding:20px;border:1px solid var(--border);border-radius:10px;}
+.chart-card h3{font-size:15px;margin-bottom:16px;color:var(--text);}
+.tier-stack{display:flex;flex-direction:column;gap:8px;max-width:800px;margin:0 auto;}
+.tier-box{border-radius:10px;padding:20px 24px;}
+.tier-cloud{background:linear-gradient(135deg,#EFF6FF,#DBEAFE);border:1.5px solid #93C5FD;}
+.tier-edge{background:linear-gradient(135deg,#FFF7ED,#FFEDD5);border:1.5px solid #FDBA74;}
+.tier-vehicle{background:linear-gradient(135deg,#F0FDF4,#DCFCE7);border:1.5px solid #86EFAC;}
+.tier-label{font-weight:700;font-size:14px;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;}
+.tier-cloud .tier-label{color:#1E40AF;}
+.tier-edge .tier-label{color:#C2410C;}
+.tier-vehicle .tier-label{color:#166534;}
+.tier-ucs{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0;}
+.uc-badge{padding:3px 10px;border-radius:6px;font-size:12px;font-weight:600;
+  background:rgba(0,0,0,.06);color:var(--text);}
+.tier-meta{font-size:12px;color:var(--text2);}
+.tier-connector{text-align:center;font-size:13px;color:var(--text2);padding:2px 0;}
+.comp-table{width:100%;border-collapse:collapse;font-size:14px;}
+.comp-table th{background:#F1F5F9;padding:10px 14px;text-align:left;
+  font-weight:600;border-bottom:2px solid var(--border);font-size:13px;}
+.comp-table td{padding:8px 14px;border-bottom:1px solid var(--border);}
+.comp-table tr:hover{background:#F8FAFC;}
+.comp-table .metric-label{font-weight:600;color:var(--text);white-space:nowrap;}
+.comp-table .group-header{background:#F8FAFC;font-weight:700;font-size:12px;
+  text-transform:uppercase;letter-spacing:.5px;color:var(--text2);}
+.cell-good{color:var(--good);font-weight:600;}
+.cell-warn{color:var(--warn);font-weight:600;}
+.cell-bad{color:var(--bad);font-weight:600;}
+.builder-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;}
+.builder-form label{display:block;margin-bottom:12px;font-size:14px;font-weight:600;}
+.builder-form input,.builder-form textarea,.builder-form select{
+  width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:6px;
+  font-size:14px;margin-top:4px;}
+.comp-row{display:flex;gap:8px;margin-bottom:8px;align-items:center;}
+.comp-row input,.comp-row select{margin-top:0;}
+.comp-row .comp-name{flex:2;} .comp-row select{flex:1;}
+.comp-row .comp-owner{flex:1;}
+.btn-remove{background:none;border:none;color:var(--bad);cursor:pointer;
+  font-size:18px;padding:4px 8px;}
+.btn-add{background:none;border:1px dashed var(--border);padding:8px 16px;
+  border-radius:6px;cursor:pointer;font-size:14px;color:var(--text2);
+  margin:8px 0;display:block;width:100%;}
+.btn-add:hover{border-color:var(--brand);color:var(--brand);}
+.btn-primary{background:var(--brand);color:white;border:none;padding:10px 24px;
+  border-radius:6px;cursor:pointer;font-weight:600;font-size:14px;margin-top:12px;}
+.btn-primary:hover{opacity:.9;}
+.btn-secondary{background:#F1F5F9;color:var(--text);border:1px solid var(--border);
+  padding:8px 16px;border-radius:6px;cursor:pointer;font-size:13px;margin-top:8px;}
+.yaml-output{background:#1E293B;color:#E2E8F0;padding:16px;border-radius:8px;
+  font-size:13px;line-height:1.5;overflow-x:auto;min-height:200px;
+  font-family:'JetBrains Mono','Fira Code',monospace;white-space:pre;}
+.builder-output h4{margin-bottom:8px;font-size:14px;}
+.footer{text-align:center;padding:24px;font-size:13px;color:var(--text2);}
+@media print{
+  body{background:white;}
+  .panel{box-shadow:none;border:1px solid #ddd;break-inside:avoid;margin:12px 0;}
+  .header{background:#1E293B!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  #panel-builder{display:none;}
+}
+@media(max-width:768px){
+  .split-grid,.builder-grid{grid-template-columns:1fr;}
+  .kpi-grid{grid-template-columns:repeat(2,1fr);}
+  .header{padding:16px 20px;}
+  .panel{margin:12px;padding:20px;}
+}
+
+</style>
+</head>
+<body>
+
+<!-- PANEL 0: Header -->
+<header class="header">
+  <div class="header-brand">
+    <div class="logo">&#x2B21;</div>
+    <div>
+      <h1>UGAF-ITS Governance Engine <span class="version">v1.1</span></h1>
+      <p class="subtitle">Multi-Scenario Validation Dashboard</p>
+    </div>
+  </div>
+  <div class="header-meta">
+    <span class="meta-pill">4 scenarios</span>
+    <span class="meta-pill">1.86ms total</span>
+    <span class="meta-pill">2026-03-30 18:06 UTC</span>
+  </div>
+</header>
+
+<!-- PANEL 1: Executive Summary -->
+<section class="panel" id="panel-executive">
+  <h2 class="panel-title">Executive Summary</h2>
+  <p class="panel-desc">Harmonizing ISO/IEC 42001, EU AI Act, and NIST AI RMF across 4 ITS deployment archetypes</p>
+  <div class="kpi-grid">
+    <div class="kpi-card kpi-neutral">
+  <div class="kpi-value">154</div>
+  <div class="kpi-label">Source Obligations</div>
+  <div class="kpi-sub">From 3 frameworks</div>
+</div>
+    <div class="kpi-card kpi-brand">
+  <div class="kpi-value">12</div>
+  <div class="kpi-label">Unified Controls</div>
+  <div class="kpi-sub">Consolidated catalog</div>
+</div>
+    <div class="kpi-card kpi-good">
+  <div class="kpi-value">91.7%</div>
+  <div class="kpi-label">Avg Coverage</div>
+  <div class="kpi-sub">Across all frameworks</div>
+</div>
+    <div class="kpi-card kpi-good">
+  <div class="kpi-value">45.9%</div>
+  <div class="kpi-label">Evidence Reduction</div>
+  <div class="kpi-sub">vs siloed approach</div>
+</div>
+    <div class="kpi-card kpi-good">
+  <div class="kpi-value">100.0%</div>
+  <div class="kpi-label">Traceability</div>
+  <div class="kpi-sub">Bidirectional links</div>
+</div>
+  </div>
+</section>
+
+<!-- PANEL 2: Framework Coverage -->
+<section class="panel" id="panel-coverage">
+  <h2 class="panel-title">Framework Coverage Across Deployment Archetypes</h2>
+  <p class="panel-desc">Structural coverage of scoped obligations per framework and scenario</p>
+  <div class="chart-wrap"><canvas id="chartCoverage"></canvas></div>
+  <p class="chart-note">Coverage varies by architecture. Full three-tier deployments achieve &#8805;91% average; partial deployments show proportionally lower coverage due to tier-dependent obligations.</p>
+</section>
+
+<!-- PANEL 3: Evidence Backbone -->
+<section class="panel" id="panel-evidence">
+  <h2 class="panel-title">Evidence Backbone Analysis</h2>
+  <div class="split-grid">
+    <div class="chart-card">
+      <h3>Document Reduction</h3>
+      <div class="chart-wrap-sm"><canvas id="chartReduction"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <h3>Artifact Reuse Distribution</h3>
+      <div class="chart-wrap-sm"><canvas id="chartReuse"></canvas></div>
+    </div>
+  </div>
+  <p class="chart-note">Each artifact serves 2.8 frameworks on average, eliminating parallel documentation packages.</p>
+</section>
+
+<!-- PANEL 4: Consolidation -->
+<section class="panel" id="panel-consolidation">
+  <h2 class="panel-title">Crosswalk Consolidation by Governance Domain</h2>
+  <p class="panel-desc">How source obligations consolidate into unified controls across 8 governance domains</p>
+  <div class="chart-wrap"><canvas id="chartConsolidation"></canvas></div>
+</section>
+
+<!-- PANEL 5: Tier Architecture -->
+<section class="panel" id="panel-tiers">
+  <h2 class="panel-title">Three-Tier Governance Architecture</h2>
+  <p class="panel-desc">Control allocation follows deployment topology &mdash; governance attaches where behavior executes</p>
+  <div class="tier-stack">
+  <div class="tier-box tier-cloud">
+    <div class="tier-label">&#9729; Tier 3: Cloud &mdash; Backend Infrastructure</div>
+    <div class="tier-ucs"><span class="uc-badge">UC-01</span> <span class="uc-badge">UC-02</span> <span class="uc-badge">UC-03</span> <span class="uc-badge">UC-04</span> <span class="uc-badge">UC-07</span> <span class="uc-badge">UC-08</span> <span class="uc-badge">UC-09</span> <span class="uc-badge">UC-10</span> <span class="uc-badge">UC-11</span> <span class="uc-badge">UC-12</span></div>
+    <div class="tier-meta">4 components &middot; TMC, ML Training, OTA, Fleet Analytics</div>
+  </div>
+  <div class="tier-connector">&#9660; V2N Interface</div>
+  <div class="tier-box tier-edge">
+    <div class="tier-label">&#128225; Tier 2: Edge/RSU &mdash; Roadside Infrastructure</div>
+    <div class="tier-ucs"><span class="uc-badge">UC-01</span> <span class="uc-badge">UC-02</span> <span class="uc-badge">UC-03</span> <span class="uc-badge">UC-04</span> <span class="uc-badge">UC-05</span> <span class="uc-badge">UC-06</span> <span class="uc-badge">UC-07</span> <span class="uc-badge">UC-08</span> <span class="uc-badge">UC-09</span> <span class="uc-badge">UC-10</span> <span class="uc-badge">UC-12</span></div>
+    <div class="tier-meta">4 components &middot; Smart Signal, VRU Detection, V2I, Decision Engine</div>
+  </div>
+  <div class="tier-connector">&#9660; V2I Interface</div>
+  <div class="tier-box tier-vehicle">
+    <div class="tier-label">&#128663; Tier 1: Vehicle &mdash; On-Board Systems</div>
+    <div class="tier-ucs"><span class="uc-badge">UC-01</span> <span class="uc-badge">UC-02</span> <span class="uc-badge">UC-05</span> <span class="uc-badge">UC-06</span> <span class="uc-badge">UC-07</span> <span class="uc-badge">UC-08</span> <span class="uc-badge">UC-09</span> <span class="uc-badge">UC-10</span> <span class="uc-badge">UC-12</span></div>
+    <div class="tier-meta">4 components &middot; ADAS, Path Planning, V2X Client, DMS</div>
+  </div>
+</div>
+</section>
+
+<!-- PANEL 6: Comparative Table -->
+<section class="panel" id="panel-table">
+  <h2 class="panel-title">Multi-Scenario Comparative Validation</h2>
+  <table class="comp-table"><thead><tr><th>Metric</th><th>Urban</th><th>Highway</th><th>Transit</th><th>Rural</th></tr></thead><tbody><tr><td class="group-header" colspan="5">Architecture</td></tr><tr><td class="metric-label">Active tiers</td><td class="">T1, T2, T3</td><td class="">T1, T2, T3</td><td class="">T2, T3</td><td class="">T2</td></tr><tr><td class="metric-label">Components</td><td class="">12</td><td class="">7</td><td class="">5</td><td class="">2</td></tr><tr><td class="metric-label">Stakeholders</td><td class="">3</td><td class="">3</td><td class="">2</td><td class="">1</td></tr><tr><td class="group-header" colspan="5">Governance Controls</td></tr><tr><td class="metric-label">Activated UCs</td><td class="">12/12</td><td class="">12/12</td><td class="">12/12</td><td class="">11/12</td></tr><tr><td class="metric-label">Evidence chains</td><td class="">5</td><td class="">5</td><td class="">4</td><td class="">0</td></tr><tr><td class="group-header" colspan="5">Evidence Backbone</td></tr><tr><td class="metric-label">Unified artifacts</td><td class="">20</td><td class="">20</td><td class="">18</td><td class="">12</td></tr><tr><td class="metric-label">Siloed baseline</td><td class="">37</td><td class="">37</td><td class="">25</td><td class="">13</td></tr><tr><td class="metric-label">Reduction</td><td class="">45.9%</td><td class="">45.9%</td><td class="">28.0%</td><td class="">7.7%</td></tr><tr><td class="metric-label">Reuse factor</td><td class="">2.8</td><td class="">2.8</td><td class="">2.89</td><td class="">2.92</td></tr><tr><td class="group-header" colspan="5">Framework Coverage</td></tr><tr><td class="metric-label">ISO/IEC 42001</td><td class="cell-good">94.5%</td><td class="cell-good">94.5%</td><td class="cell-good">94.5%</td><td class="cell-good">92.7%</td></tr><tr><td class="metric-label">EU AI Act</td><td class="cell-good">91.9%</td><td class="cell-good">91.9%</td><td class="cell-good">91.9%</td><td class="cell-warn">89.2%</td></tr><tr><td class="metric-label">NIST AI RMF</td><td class="cell-warn">88.7%</td><td class="cell-warn">88.7%</td><td class="cell-warn">88.7%</td><td class="cell-warn">82.3%</td></tr><tr><td class="metric-label">Average</td><td class="cell-good">91.7%</td><td class="cell-good">91.7%</td><td class="cell-good">91.7%</td><td class="cell-warn">88.1%</td></tr><tr><td class="group-header" colspan="5">Depth &amp; Quality</td></tr><tr><td class="metric-label">Inst. depth</td><td class="">0.942</td><td class="">0.683</td><td class="">0.487</td><td class="">0.458</td></tr><tr><td class="metric-label">Interpretation</td><td class="">Production-grade</td><td class="">Substantial</td><td class="">Partial</td><td class="">Partial</td></tr><tr><td class="metric-label">Traceability</td><td class="cell-good">100.0%</td><td class="cell-good">100.0%</td><td class="cell-good">100.0%</td><td class="cell-good">100.0%</td></tr><tr><td class="metric-label">Gaps</td><td class="">13</td><td class="">13</td><td class="">13</td><td class="">19</td></tr></tbody></table>
+</section>
+
+<!-- PANEL 7: Gap Classification -->
+<section class="panel" id="panel-gaps">
+  <h2 class="panel-title">Gap Analysis: What UGAF-ITS Does Not Cover</h2>
+  <p class="panel-desc">Obligations outside the framework's technical scope, classified by category</p>
+  <div class="chart-wrap-sm"><canvas id="chartGaps"></canvas></div>
+</section>
+
+<!-- PANEL 8: Instantiation Depth -->
+<section class="panel" id="panel-depth">
+  <h2 class="panel-title">Instantiation Depth by Scenario</h2>
+  <p class="panel-desc">Beyond structural coverage: how deeply each deployment populates the governance architecture</p>
+  <div class="chart-wrap"><canvas id="chartDepth"></canvas></div>
+</section>
+
+<!-- PANEL 9: Scenario Builder -->
+<section class="panel" id="panel-builder">
+  <h2 class="panel-title">Scenario Builder</h2>
+  <p class="panel-desc">Configure a custom ITS deployment to generate a YAML scenario file</p>
+  <div class="builder-grid">
+  <div class="builder-form">
+    <label>Scenario Name <input type="text" id="sb-name" value="Custom Deployment" /></label>
+    <label>Description <textarea id="sb-desc" rows="2">Custom ITS deployment scenario</textarea></label>
+    <h4>Components</h4>
+    <div id="sb-components">
+      <div class="comp-row">
+        <input type="text" placeholder="Component name" class="comp-name" value="ADAS Perception"/>
+        <select class="comp-tier"><option value="T1" selected>T1 Vehicle</option><option value="T2">T2 Edge/RSU</option><option value="T3">T3 Cloud</option></select>
+        <select class="comp-risk"><option value="high" selected>High</option><option value="medium">Medium</option><option value="low">Low</option></select>
+        <input type="text" placeholder="Owner" class="comp-owner" value="oem"/>
+        <button class="btn-remove" onclick="this.parentElement.remove()">&#x2715;</button>
+      </div>
+    </div>
+    <button class="btn-add" onclick="addComponent()">+ Add Component</button>
+    <button class="btn-primary" onclick="generateYAML()">Generate YAML</button>
+  </div>
+  <div class="builder-output">
+    <h4>Generated YAML</h4>
+    <pre id="sb-yaml" class="yaml-output">Click "Generate YAML" to produce scenario file</pre>
+    <button class="btn-copy btn-secondary" onclick="copyYAML()">Copy to Clipboard</button>
+  </div>
+</div>
+</section>
+
+<footer class="footer">
+  <p>UGAF-ITS Governance Engine v1.1 &middot; 154 source obligations (55 ISO + 37 EU + 62 NIST) &middot; Generated 2026-03-30 18:06 UTC</p>
+</footer>
+
+<script>
+// ===== DATA =====
+
+const DATA = {
+  coverage: {"labels": ["Urban", "Highway", "Transit", "Rural"], "iso": [94.5, 94.5, 94.5, 92.7], "eu": [91.9, 91.9, 91.9, 89.2], "nist": [88.7, 88.7, 88.7, 82.3]},
+  evidence: {"labels": ["Urban", "Highway", "Transit", "Rural"], "siloed": [37, 37, 25, 13], "unified": [20, 20, 18, 12]},
+  reuse: {"three": 16, "two": 4, "one": 0},
+  consolidation: {"labels": ["Risk Management", "Data Governance", "Human Oversight", "Transparency", "Accuracy & Robustness", "Documentation", "Supply Chain", "Incident Management"], "iso": [23, 7, 5, 3, 4, 5, 2, 6], "eu": [13, 4, 4, 2, 4, 5, 2, 3], "nist": [17, 7, 5, 3, 10, 8, 4, 8], "ucs": [2, 2, 2, 1, 2, 1, 1, 1]},
+  gaps: {"labels": ["Organizational Procedure", "Regulatory Workflow", "Context Setting", "Tier Not Present"], "values": [3.0, 3.0, 7.0, 1.5]},
+  depth: {"labels": ["Urban", "Highway", "Transit", "Rural"], "datasets": [{"label": "Urban", "data": [0.942, 1.0, 0.833], "borderColor": "rgb(8,145,178)", "backgroundColor": "rgba(8,145,178,0.1)", "pointRadius": 4, "borderWidth": 2}, {"label": "Highway", "data": [0.683, 0.583, 0.571], "borderColor": "rgb(30,58,110)", "backgroundColor": "rgba(30,58,110,0.1)", "pointRadius": 4, "borderWidth": 2}, {"label": "Transit", "data": [0.487, 0.625, 0.2], "borderColor": "rgb(127,29,29)", "backgroundColor": "rgba(127,29,29,0.1)", "pointRadius": 4, "borderWidth": 2}, {"label": "Rural", "data": [0.458, 0.5, 0.5], "borderColor": "rgb(20,83,45)", "backgroundColor": "rgba(20,83,45,0.1)", "pointRadius": 4, "borderWidth": 2}]},
+};
+
+const C = {
+  iso: '#1E3A6E', eu: '#7F1D1D', nist: '#14532D',
+  brand: '#0891B2', good: '#059669', warn: '#D97706',
+  bad: '#DC2626', muted: '#94A3B8', light: '#CBD5E1'
+};
+
+
+// ===== CHARTS =====
+
+new Chart(document.getElementById('chartCoverage'), {
+  type: 'bar',
+  data: {
+    labels: DATA.coverage.labels,
+    datasets: [
+      {label:'ISO/IEC 42001', data:DATA.coverage.iso, backgroundColor:C.iso, borderRadius:4},
+      {label:'EU AI Act', data:DATA.coverage.eu, backgroundColor:C.eu, borderRadius:4},
+      {label:'NIST AI RMF', data:DATA.coverage.nist, backgroundColor:C.nist, borderRadius:4},
+    ]
+  },
+  options: {
+    responsive:true,
+    scales: {
+      y: {min:0, max:100, ticks:{callback:function(v){return v+'%'}},
+        title:{display:true, text:'Coverage (%)', font:{weight:'bold'}}},
+      x: {title:{display:true, text:'Deployment Scenario', font:{weight:'bold'}}}
+    },
+    plugins: {legend:{position:'bottom'}}
+  }
+});
+
+new Chart(document.getElementById('chartReduction'), {
+  type: 'bar',
+  data: {
+    labels: DATA.evidence.labels,
+    datasets: [
+      {label:'Siloed baseline', data:DATA.evidence.siloed, backgroundColor:C.muted, borderRadius:4},
+      {label:'UGAF-ITS unified', data:DATA.evidence.unified, backgroundColor:C.brand, borderRadius:4},
+    ]
+  },
+  options: {
+    responsive:true,
+    scales: {
+      y:{beginAtZero:true, title:{display:true, text:'Documents'}},
+      x:{title:{display:true, text:'Scenario'}}
+    },
+    plugins: {legend:{position:'bottom'}}
+  }
+});
+
+new Chart(document.getElementById('chartReuse'), {
+  type: 'doughnut',
+  data: {
+    labels: ['3 frameworks','2 frameworks','1 framework'],
+    datasets: [{
+      data:[DATA.reuse.three, DATA.reuse.two, DATA.reuse.one],
+      backgroundColor:[C.good, C.warn, C.muted],
+      borderWidth:0
+    }]
+  },
+  options: {
+    responsive:true, cutout:'55%',
+    plugins: {legend:{position:'bottom'}}
+  }
+});
+
+new Chart(document.getElementById('chartConsolidation'), {
+  type: 'bar',
+  data: {
+    labels: DATA.consolidation.labels,
+    datasets: [
+      {label:'ISO 42001', data:DATA.consolidation.iso, backgroundColor:C.iso},
+      {label:'EU AI Act', data:DATA.consolidation.eu, backgroundColor:C.eu},
+      {label:'NIST AI RMF', data:DATA.consolidation.nist, backgroundColor:C.nist},
+    ]
+  },
+  options: {
+    indexAxis:'y', responsive:true,
+    scales: {
+      x:{stacked:true, title:{display:true, text:'Source Obligations'}},
+      y:{stacked:true}
+    },
+    plugins: {legend:{position:'bottom'}}
+  }
+});
+
+new Chart(document.getElementById('chartGaps'), {
+  type: 'bar',
+  data: {
+    labels: DATA.gaps.labels,
+    datasets: [{
+      data: DATA.gaps.values,
+      backgroundColor: [C.muted, C.muted, C.muted, C.light],
+      borderRadius: 4
+    }]
+  },
+  options: {
+    indexAxis:'y', responsive:true,
+    scales: {x:{beginAtZero:true, title:{display:true, text:'Avg. obligations per scenario'}}},
+    plugins: {legend:{display:false}}
+  }
+});
+
+new Chart(document.getElementById('chartDepth'), {
+  type: 'radar',
+  data: {
+    labels: ['Overall Depth','Component Density','Risk Factor'],
+    datasets: DATA.depth.datasets
+  },
+  options: {
+    responsive:true,
+    scales: {r:{min:0, max:1, ticks:{stepSize:0.25}}},
+    plugins: {legend:{position:'bottom'}}
+  }
+});
+
+
+// ===== SCENARIO BUILDER =====
+
+function addComponent() {
+  var row = document.createElement('div');
+  row.className = 'comp-row';
+  row.innerHTML =
+    '<input type="text" placeholder="Component name" class="comp-name" value="New Component"/>' +
+    '<select class="comp-tier"><option value="T1">T1 Vehicle</option><option value="T2" selected>T2 Edge/RSU</option><option value="T3">T3 Cloud</option></select>' +
+    '<select class="comp-risk"><option value="high">High</option><option value="medium" selected>Medium</option><option value="low">Low</option></select>' +
+    '<input type="text" placeholder="Owner" class="comp-owner" value="integrator"/>' +
+    '<button class="btn-remove" onclick="this.parentElement.remove()">&#x2715;</button>';
+  document.getElementById('sb-components').appendChild(row);
+}
+
+function generateYAML() {
+  var name = document.getElementById('sb-name').value;
+  var desc = document.getElementById('sb-desc').value;
+  var rows = document.querySelectorAll('.comp-row');
+  var yaml = '# Auto-generated UGAF-ITS scenario\n';
+  yaml += 'name: "' + name + '"\n';
+  yaml += 'description: >\n  ' + desc + '\n\n';
+  yaml += 'components:\n';
+  rows.forEach(function(row) {
+    var cn = row.querySelector('.comp-name').value;
+    var ct = row.querySelector('.comp-tier').value;
+    var cr = row.querySelector('.comp-risk').value;
+    var co = row.querySelector('.comp-owner').value;
+    yaml += '  - name: "' + cn + '"\n';
+    yaml += '    tier: "' + ct + '"\n';
+    yaml += '    risk_level: "' + cr + '"\n';
+    yaml += '    owner: "' + co + '"\n\n';
+  });
+  document.getElementById('sb-yaml').textContent = yaml;
+}
+
+function copyYAML() {
+  var text = document.getElementById('sb-yaml').textContent;
+  navigator.clipboard.writeText(text).then(function() {
+    var btn = document.querySelector('.btn-copy');
+    if(btn) { btn.textContent = 'Copied!'; setTimeout(function(){btn.textContent='Copy to Clipboard';}, 2000); }
+  });
+}
+
+</script>
+</body>
+</html>

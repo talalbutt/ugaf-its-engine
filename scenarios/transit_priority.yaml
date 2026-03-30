@@ -1,0 +1,8 @@
+name: "Transit Priority Corridor"
+description: "Edge-heavy transit signal priority — no vehicle AI (T2+T3 only)"
+components:
+  - {name: "Transit Signal Priority AI", tier: "T2", risk_level: "high", owner: "transit_authority"}
+  - {name: "Passenger Counting AI", tier: "T2", risk_level: "medium", owner: "integrator"}
+  - {name: "Queue Detection", tier: "T2", risk_level: "medium", owner: "integrator"}
+  - {name: "Schedule Optimization", tier: "T3", risk_level: "medium", owner: "transit_authority"}
+  - {name: "Transit Analytics", tier: "T3", risk_level: "low", owner: "transit_authority"}

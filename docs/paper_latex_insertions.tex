@@ -1,0 +1,259 @@
+% ============================================================================
+% UGAF-ITS PAPER REVISION — LaTeX Content for Insertion
+% ============================================================================
+%
+% This file contains ready-to-paste LaTeX content for:
+%   1. NEW Section VII-B: Computational Validation via Prototype Tool
+%   2. NEW Table: Multi-Scenario Comparative Results
+%   3. REVISED abstract sentences
+%   4. REVISED Section VII-D (Threats to Validity) updates
+%
+% Instructions:
+%   - Insert Section VII-B between current VII-A and VII-B (renumber VII-B→VII-C etc.)
+%   - Replace current Table 9 with the new multi-scenario table
+%   - Update abstract with the new sentences
+%   - Update VII-D with the revised text
+% ============================================================================
+
+
+% ============================================================================
+% 1. NEW SECTION VII-B: COMPUTATIONAL VALIDATION
+% ============================================================================
+% Insert AFTER Section VII-A (Case Study Context) and BEFORE the current
+% Section VII-B (UGAF-ITS Application). Renumber subsequent subsections.
+
+\subsection{Computational Validation via Prototype Tool}
+\label{subsec:prototype_tool}
+
+To validate the operational feasibility of UGAF-ITS beyond the single
+Dubai-inspired scenario, we developed a Python-based governance engine
+that algorithmically evaluates ITS deployment architectures against the
+unified control catalog. The tool ingests a YAML deployment descriptor
+defining the system's AI components, their tier placement, risk levels,
+and ownership, and produces a compliance report through five computations:
+(i) tier-aware control activation, (ii) evidence backbone construction
+with cross-framework reuse analysis, (iii) bidirectional traceability
+verification, (iv) per-framework coverage analysis, and (v) gap
+detection with categorical classification. The tool, deployment
+scenarios, and generated results are publicly available.\footnote{%
+\url{https://github.com/YOUR_USERNAME/ugaf-its-engine}}
+
+We validated the engine against four architecturally distinct ITS
+deployment archetypes selected to address the external validity
+limitation identified in Section~\ref{subsec:threats}: (1)~a full
+three-tier urban smart intersection mirroring the Dubai-inspired
+scenario with 12~components across vehicle, edge/RSU, and cloud tiers;
+(2)~a highway corridor ADS deployment with strong vehicle-tier autonomy
+and minimal edge presence; (3)~a transit priority corridor operating
+exclusively at the edge and cloud tiers with no vehicle AI; and
+(4)~a rural intersection with a single-tier edge-only deployment
+representing the minimum governance footprint. These four archetypes
+span the deployment diversity described in Section~\ref{subsec:threats},
+from maximum architectural complexity to minimum viable deployment.
+
+Listing~\ref{lst:yaml_snippet} shows an abbreviated deployment
+descriptor. The engine reads this descriptor, determines which tiers
+are active, activates the applicable unified controls from the catalog
+(Table~\ref{tab:uc_catalog}), computes the evidence backbone, and
+verifies traceability completeness. A representative output fragment is
+shown in Listing~\ref{lst:json_output}.
+
+\begin{figure}[t]
+\begin{lstlisting}[language={},basicstyle=\ttfamily\scriptsize,
+  caption={Abbreviated YAML deployment descriptor for the transit
+  priority corridor scenario.},label={lst:yaml_snippet},
+  frame=single,xleftmargin=0.5em,numbers=none]
+name: "Transit Priority Corridor"
+components:
+  - name: "Transit Signal Priority AI"
+    tier: "T2"
+    risk_level: "high"
+    owner: "transit_authority"
+  - name: "Schedule Optimization"
+    tier: "T3"
+    risk_level: "medium"
+    owner: "transit_authority"
+\end{lstlisting}
+\end{figure}
+
+\begin{figure}[t]
+\begin{lstlisting}[language={},basicstyle=\ttfamily\scriptsize,
+  caption={Representative JSON output fragment showing control
+  activation and evidence metrics for the transit priority
+  corridor.},label={lst:json_output},
+  frame=single,xleftmargin=0.5em,numbers=none]
+{
+  "control_activation": {
+    "total_activated": 12,
+    "total_possible": 12,
+    "activation_ratio": 100.0
+  },
+  "evidence_metrics": {
+    "unified_artifacts": 18,
+    "siloed_baseline": 37,
+    "reduction_percentage": 51.4,
+    "avg_reuse_factor": 2.89
+  },
+  "traceability": {
+    "traceability_score": 100.0,
+    "status": "COMPLETE"
+  }
+}
+\end{lstlisting}
+\end{figure}
+
+
+% ============================================================================
+% 2. NEW TABLE: MULTI-SCENARIO COMPARATIVE RESULTS
+% ============================================================================
+% Replace the current single-scenario Table 9 with this multi-scenario table.
+
+\begin{table*}[t]
+\centering
+\caption{Multi-Scenario Computational Validation Results. Four
+architecturally distinct ITS deployments evaluated by the UGAF-ITS
+governance engine. 154 source obligations (55~ISO/IEC 42001 +
+37~EU AI Act + 62~NIST AI RMF) consolidated into 12 unified controls.}
+\label{tab:multi_scenario_results}
+\renewcommand{\arraystretch}{1.15}
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{l c c c c}
+\hline
+\textbf{Metric}
+  & \textbf{Urban Intersection}
+  & \textbf{Highway Corridor}
+  & \textbf{Transit Priority}
+  & \textbf{Rural Intersection} \\
+\hline
+Active tiers
+  & T1, T2, T3 & T1, T2, T3 & T2, T3 & T2 \\
+Components
+  & 12 & 7 & 5 & 2 \\
+Stakeholders
+  & 3 & 3 & 2 & 1 \\
+\hline
+Activated UCs
+  & 12/12 & 12/12 & 12/12 & 11/12 \\
+Unified artifacts
+  & 20 & 20 & 18 & 12 \\
+Siloed baseline
+  & 37 & 37 & 37 & 37 \\
+Evidence reduction
+  & 45.9\% & 45.9\% & 51.4\% & 67.6\% \\
+Avg.\ reuse factor
+  & 2.80 & 2.80 & 2.89 & 2.92 \\
+3-framework artifacts
+  & 16 (80\%) & 16 (80\%) & 16 (89\%) & 11 (92\%) \\
+\hline
+ISO/IEC 42001 coverage
+  & 94.5\% & 94.5\% & 94.5\% & 92.7\% \\
+EU AI Act coverage
+  & 91.9\% & 91.9\% & 91.9\% & 89.2\% \\
+NIST AI RMF coverage
+  & 88.7\% & 88.7\% & 88.7\% & 82.3\% \\
+\textbf{Average coverage}
+  & \textbf{91.7\%} & \textbf{91.7\%} & \textbf{91.7\%} & \textbf{88.1\%} \\
+\hline
+Traceability completeness
+  & 100\% & 100\% & 100\% & 100\% \\
+Coverage gaps
+  & 13 & 13 & 13 & 19 \\
+\hline
+\end{tabular}
+\begin{tablenotes}\footnotesize
+\item \textit{Baseline}: siloed compliance modeled as 15~ISO + 12~EU + 10~NIST = 37 documents.
+\textit{Rural gaps}: 6~tier-dependent (UC-11 inactive), 3~organizational, 3~regulatory, 7~context-setting.
+All values computed by the UGAF-ITS governance engine (publicly available).
+\end{tablenotes}
+\end{table*}
+
+
+% ============================================================================
+% 3. REVISED ABSTRACT SENTENCES
+% ============================================================================
+% Replace the current single-scenario validation sentence with this:
+
+% FIND in abstract:
+%   "A Dubai-inspired smart intersection instantiation reports 95%
+%    coverage of ISO/IEC 42001 Annex A controls, 92% coverage of scoped
+%    EU AI Act high-risk obligations, and 88% coverage of NIST AI RMF
+%    subcategories, while reducing evidence artifacts by 46%."
+%
+% REPLACE WITH:
+%   "Computational validation across four architecturally distinct ITS
+%    deployments---from full three-tier metropolitan intersections to
+%    single-tier rural installations---reports 91.7\% average framework
+%    coverage for three-tier deployments (ISO~94.5\%, EU AI Act~91.9\%,
+%    NIST~88.7\%), evidence artifact reduction of 45.9\%--67.6\%
+%    depending on architectural complexity, and 100\% bidirectional
+%    traceability across all topologies. The governance engine and
+%    deployment scenarios are publicly available."
+
+
+% ============================================================================
+% 4. REVISED SECTION VII-D (THREATS TO VALIDITY)
+% ============================================================================
+% Update the "External validity" paragraph. Replace:
+
+% FIND:
+%   "External validity: The intersection scenario reflects only one ITS
+%    archetype. Highway corridors, transit-priority networks, and
+%    low-connectivity deployments may shift which tiers dominate control
+%    enforcement and evidence production."
+%
+% REPLACE WITH:
+%   "External validity: We address the single-archetype limitation
+%    through computational validation across four deployment archetypes
+%    spanning three-tier urban intersections, highway corridors,
+%    transit-priority networks, and single-tier rural intersections
+%    (Table~\ref{tab:multi_scenario_results}). Results confirm that
+%    evidence reduction remains stable (45.9\%--67.6\%) and traceability
+%    is preserved at 100\% across architecturally diverse topologies.
+%    Coverage varies from 88.1\% to 91.7\% depending on tier
+%    composition, which is an honest architectural property: deployments
+%    missing entire tiers legitimately require fewer controls.
+%    Additional archetypes such as maritime corridors or airport surface
+%    operations remain untested."
+
+
+% ============================================================================
+% 5. REVISED SECTION VII-C (VALIDATION RESULTS) — KEY PARAGRAPHS
+% ============================================================================
+% Add this paragraph after presenting Table multi_scenario_results:
+
+% "The multi-scenario validation reveals four structural properties of
+%  UGAF-ITS. First, governance requirements are architecturally
+%  contingent: a rural single-tier deployment activates 11 of 12
+%  controls and requires 12 artifacts, while a full three-tier
+%  intersection activates all 12 controls and requires 20 artifacts.
+%  The deactivated control (UC-11, Supplier AI Assessment) is
+%  cloud-specific by design, confirming that the tier allocation model
+%  correctly suppresses controls irrelevant to the deployment topology.
+%  Second, evidence reduction remains stable across architectures:
+%  45.9\% for three-tier deployments, rising to 67.6\% for single-tier
+%  deployments where fewer tier-specific artifacts are needed while the
+%  siloed compliance burden remains constant. Third, bidirectional
+%  traceability is 100\% across all four scenarios, enforced by
+%  construction through the crosswalk methodology. Fourth, coverage
+%  gaps are systematically classifiable: 13 gaps in three-tier
+%  deployments fall into organizational procedures (3), regulatory
+%  workflows (3), and context-setting activities (7), while the rural
+%  deployment adds 6 tier-dependent gaps where obligations target tiers
+%  absent from the architecture."
+
+
+% ============================================================================
+% 6. SECTION TO ADD TO CONCLUSION
+% ============================================================================
+% Add before the final "Future work" sentence:
+
+% "Computational validation across four ITS archetypes confirms that
+%  the crosswalk methodology and evidence backbone produce stable
+%  governance properties across architecturally diverse deployments.
+%  The open-source governance engine enables reproducible evaluation
+%  of arbitrary ITS architectures against the unified control catalog."
+
+
+% ============================================================================
+% END OF REVISION CONTENT
+% ============================================================================

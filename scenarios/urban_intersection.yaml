@@ -1,0 +1,15 @@
+name: "Urban Smart Intersection"
+description: "Full three-tier metropolitan intersection with multi-stakeholder ownership (Dubai RTA-inspired)"
+components:
+  - {name: "ADAS/ADS Perception", tier: "T1", risk_level: "high", owner: "oem"}
+  - {name: "Path Planning & Control", tier: "T1", risk_level: "high", owner: "oem"}
+  - {name: "V2X Client & OBU", tier: "T1", risk_level: "high", owner: "oem"}
+  - {name: "Driver Monitoring System", tier: "T1", risk_level: "high", owner: "oem"}
+  - {name: "Smart Signal Control AI", tier: "T2", risk_level: "high", owner: "integrator"}
+  - {name: "Pedestrian/VRU Detection", tier: "T2", risk_level: "high", owner: "integrator"}
+  - {name: "V2I Gateway", tier: "T2", risk_level: "medium", owner: "integrator"}
+  - {name: "Local Decision Engine", tier: "T2", risk_level: "high", owner: "integrator"}
+  - {name: "Traffic Management Center", tier: "T3", risk_level: "high", owner: "authority"}
+  - {name: "ML Model Training", tier: "T3", risk_level: "high", owner: "authority"}
+  - {name: "OTA Update Distribution", tier: "T3", risk_level: "medium", owner: "authority"}
+  - {name: "Fleet Analytics & Monitoring", tier: "T3", risk_level: "high", owner: "authority"}

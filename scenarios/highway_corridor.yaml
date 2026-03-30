@@ -1,0 +1,10 @@
+name: "Highway Corridor ADS"
+description: "Vehicle-heavy highway ADS with minimal edge and cloud fleet management"
+components:
+  - {name: "ADS Perception Stack", tier: "T1", risk_level: "high", owner: "oem"}
+  - {name: "Path Planning", tier: "T1", risk_level: "high", owner: "oem"}
+  - {name: "Driver Monitoring", tier: "T1", risk_level: "high", owner: "oem"}
+  - {name: "V2X Client", tier: "T1", risk_level: "medium", owner: "oem"}
+  - {name: "Highway Monitoring Camera", tier: "T2", risk_level: "medium", owner: "authority"}
+  - {name: "Fleet Management Cloud", tier: "T3", risk_level: "high", owner: "fleet_operator"}
+  - {name: "Risk Aggregation Service", tier: "T3", risk_level: "medium", owner: "fleet_operator"}

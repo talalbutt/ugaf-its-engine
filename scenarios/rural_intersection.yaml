@@ -1,0 +1,5 @@
+name: "Rural Intersection"
+description: "Single-tier edge-only deployment — minimum governance footprint (T2 only)"
+components:
+  - {name: "Solar-Powered Detection", tier: "T2", risk_level: "medium", owner: "county_authority"}
+  - {name: "Local Decision Engine", tier: "T2", risk_level: "high", owner: "county_authority"}

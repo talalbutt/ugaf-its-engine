@@ -1,0 +1,3 @@
+pyyaml>=6.0
+# For high-quality figure export (optional):
+# pip install playwright && playwright install chromium
