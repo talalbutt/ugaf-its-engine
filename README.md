@@ -121,7 +121,7 @@ python run_validation.py
 
 ## Associated Publication
 
-> Butt, T.A., Iqbal, M., & Iqbal, R. (2026). *UGAF-ITS: A Unified Governance and Assurance Framework for Intelligent Transport Systems.* Computer Standards & Interfaces. [Submitted]
+> Butt, T.A., Iqbal, M., & Iqbal, R. (2026). *UGAF-ITS: A Standards Harmonization Framework and Validation Tool for Multi-Framework AI Governance in Distributed Intelligent Transportation Systems.* [Under review]
 
 ## License
 
